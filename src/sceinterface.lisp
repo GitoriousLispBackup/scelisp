@@ -6,5 +6,7 @@
 (use-foreign-library libsceinterface)
 
 (defcfun "SCE_Init_Interface" :int
-  (outlog :pointer)
+  (outlog :int)
   (flags scebitfield))
+
+(defcfun "SCE_Quit_Interface" :void)
