@@ -18,34 +18,6 @@
 ;;; Textures
 (defctype scetexture :pointer)
 
-;;; Scenes
-(defctype scescene :pointer)
-
-(defcfun "SCE_Scene_Create" scescene)
-(defcfun "SCE_Scene_Delete" :void
-  (scene scescene))
-
-(defcfun "SCE_Scene_AddCamera" :void
-  (scene scescene)
-  (camera scecamera))
-(defcfun "SCE_Scene_AddLight" :void
-  (scene scescene)
-  (light scelight))
-(defcfun "SCE_Scene_AddModel" :void
-  (scene scescene)
-  (model scemodel))
-
-(defcfun "SCE_Scene_Update" :void
-  (scene scescene)
-  (camera scecamera)
-  (rendertarget scetexture)
-  (cubeface :unsigned-int))
-(defcfun "SCE_Scene_Render" :void
-  (scene scescene)
-  (camera scecamera)
-  (rendertarget scetexture)
-  (cubeface :unsigned-int))
-
 ;;; Cameras
 (defctype scecamera :pointer)
 
@@ -68,6 +40,9 @@
 (defcfun "SCE_Light_Infinite" :void
   (light scelight)
   (inf scebool))
+
+(defcfun "SCE_Light_GetNode" scenode
+  (light scelight))
 
 ;;; Meshes
 (defctype scemesh :pointer)
@@ -101,3 +76,30 @@
 (defcfun "SCE_Model_MergeInstances" :int
   (model scemodel))
 
+;;; Scenes
+(defctype scescene :pointer)
+
+(defcfun "SCE_Scene_Create" scescene)
+(defcfun "SCE_Scene_Delete" :void
+  (scene scescene))
+
+(defcfun "SCE_Scene_AddCamera" :void
+  (scene scescene)
+  (camera scecamera))
+(defcfun "SCE_Scene_AddLight" :void
+  (scene scescene)
+  (light scelight))
+(defcfun "SCE_Scene_AddModel" :void
+  (scene scescene)
+  (model scemodel))
+
+(defcfun "SCE_Scene_Update" :void
+  (scene scescene)
+  (camera scecamera)
+  (rendertarget scetexture)
+  (cubeface :unsigned-int))
+(defcfun "SCE_Scene_Render" :void
+  (scene scescene)
+  (camera scecamera)
+  (rendertarget scetexture)
+  (cubeface :unsigned-int))

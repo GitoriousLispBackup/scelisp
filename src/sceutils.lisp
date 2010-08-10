@@ -17,3 +17,12 @@
 
 (defmethod expand-from-foreign (value (type scebool))
   `(not (zerop ,value)))
+
+;;; Matrices
+(defctype scematrix (:pointer :float))
+
+(defcfun "SCE_Matrix4_Translate" :void
+  (matrix scematrix)
+  (x :float)
+  (y :float)
+  (z :float))
