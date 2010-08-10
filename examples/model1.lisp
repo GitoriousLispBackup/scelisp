@@ -18,6 +18,9 @@
     ;; Light
     (sce-light-setcolor light 1.0 1.0 1.0)
     (sce-light-infinite light t)
+    (sce-matrix4-translate
+     (sce-node-getmatrix (sce-light-getnode light) :node-read-matrix)
+     1.0 2.4 1.0)
     (sce-scene-addlight *scene* light)
     ;; Mesh
     (sce-mesh-autobuild mesh)
