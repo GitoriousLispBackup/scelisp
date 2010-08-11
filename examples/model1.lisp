@@ -5,37 +5,45 @@
 
 (defvar *scene*)
 (defvar *camera*)
+(defvar *mesh*)
+(defvar *model*)
+(defvar *light*)
 
 (defun init ()
   (sce-init-interface 0 0)
+  (sce-init-geometry)
+  ;; Scene & camera
   (setf *scene* (sce-scene-create))
   (setf *camera* (sce-camera-create))
   (sce-scene-addcamera *scene* *camera*)
-  (let ((light (sce-light-create))
-        ;; TODO: use relative path
-        (mesh (sce-mesh-load "/home/quentin/sce/samples/model1/spaceship.obj" 2))
-        (model (sce-model-create)))
-    ;; Light
-    (sce-light-setcolor light 1.0 1.0 1.0)
-    (sce-light-infinite light t)
-    (sce-matrix4-translate
-     (sce-node-getmatrix (sce-light-getnode light) :node-read-matrix)
-     1.0 2.4 1.0)
-    (sce-scene-addlight *scene* light)
-    ;; Mesh
-    (sce-mesh-autobuild mesh)
-    ;; Model
-    (sce-model-addentity model 0 mesh (null-pointer) (null-pointer))
-    (sce-model-addnewinstance model 0 1 (null-pointer))
-    (sce-model-mergeinstances model)
-    (sce-scene-addmodel *scene* model)))
+  ;; Light
+  (setf *light* (sce-light-create))
+  (sce-light-setcolor *light* 1.0 1.0 1.0)
+  (sce-light-infinite *light* t)
+  (sce-scene-addlight *scene* *light*)
+  ;; Mesh TODO: use relative path
+  (setf *mesh* (sce-mesh-load "/home/quentin/sce/samples/model1/spaceship.obj" 2))
+  (sce-mesh-autobuild *mesh*)
+  ;; Model
+  (setf *model* (sce-model-create))
+  (sce-model-addentity *model* 0 *mesh* (null-pointer) (null-pointer))
+  (sce-model-addnewinstance *model* 0 1 (null-pointer))
+  (sce-model-mergeinstances *model*)
+  (sce-matrix4-scale (sce-node-getmatrix (sce-model-getrootnode *model*) :node-read-matrix) 0.3 0.3 0.3)
+  (sce-matrix4-rotate (sce-node-getmatrix (sce-model-getrootnode *model*) :node-read-matrix) 30.0 1.0 1.0 1.0)
+  (sce-scene-addmodel *scene* *model*))
 
 (defun quit ()
   (sce-camera-delete *camera*)
   (sce-scene-delete *scene*)
+  (sce-mesh-delete *mesh*)
+  (sce-model-delete *model*)
+  (sce-light-delete *light*)
   (sce-quit-interface))
 
 (defun draw ()
+  (when (sce-error-haveerror)
+    (sce-error-out))
   (sce-scene-update *scene* *camera* (null-pointer) 0)
   (sce-scene-render *scene* *camera* (null-pointer) 0))
 

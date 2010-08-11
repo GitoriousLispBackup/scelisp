@@ -14,3 +14,6 @@
 
 (def-sce-method node "GetMatrix" scematrix
   (id nodematrixarray))
+
+;;; Geometry
+(defcfun "SCE_Init_Geometry" :int)

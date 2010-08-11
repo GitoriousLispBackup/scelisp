@@ -58,6 +58,7 @@
   (mat :pointer))
 
 (def-sce-method model "MergeInstances" :int)
+(def-sce-method model "GetRootNode" scenode)
 
 ;;; Scenes
 (defobject scene)

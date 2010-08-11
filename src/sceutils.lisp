@@ -28,3 +28,20 @@
   (x :float)
   (y :float)
   (z :float))
+
+(defcfun "SCE_Matrix4_Scale" :void
+  (matrix scematrix)
+  (x :float)
+  (y :float)
+  (z :float))
+
+(defcfun "SCE_Matrix4_Rotate" :void
+  (matrix scematrix)
+  (a :float)
+  (x :float)
+  (y :float)
+  (z :float))
+
+;;; Errors
+(defcfun "SCE_Error_HaveError" scebool)
+(defcfun "SCE_Error_Out" :void)
