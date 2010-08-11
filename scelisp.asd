@@ -1,5 +1,5 @@
 (asdf:defsystem scelisp
-  :depends-on (:cffi)
+  :depends-on (:cffi :alexandria)
   :license "MIT"
   :description "SCEngine Common Lisp bindings"
   :components
@@ -7,6 +7,7 @@
             :serial t
             :components
             ((:file "package")
+             (:file "utils")
              (:file "sceutils")
              (:file "scecore")
              (:file "sceinterface")))))
