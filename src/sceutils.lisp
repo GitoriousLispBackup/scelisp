@@ -45,3 +45,4 @@
 ;;; Errors
 (defcfun "SCE_Error_HaveError" scebool)
 (defcfun "SCE_Error_Out" :void)
+(defcfun "SCE_Error_Clean" :void)

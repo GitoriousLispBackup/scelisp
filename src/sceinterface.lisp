@@ -24,15 +24,43 @@
 ;;; Lights
 (defobject light)
 
+(defsetter light "Activate"
+  (activated scebool))
+(def-sce-method light "IsActivated" scebool)
+
+;; TODO GetIterator
+(def-sce-method light "GetNode" scenode)
+
 (defsetter light "SetColor"
   (r :float)
   (g :float)
   (b :float))
+;; TODO SetColorv
+;; TODO GetColor
+;; TODO GetColorv
+;; TODO GetPositionv
+;; TODO GetDirectionv
 
 (defsetter light "Infinite"
   (inf scebool))
+(def-sce-method light "IsInfinite" scebool)
 
-(def-sce-method light "GetNode" scenode)
+(defsetter light "SetAngle"
+  (angle :float))
+(def-sce-method light "GetAngle" :float)
+
+(defsetter light "SetIntensity"
+  (intensity :float))
+(def-sce-method light "GetIntensity" :float)
+
+(defsetter light "SetRadius"
+  (radius :float))
+(defgetter light "GetRadius" :float)
+
+(defcfun "SCE_Light_ActivateLighting" :void
+  (activated scebool))
+
+(defsetter light "Use")
 
 ;;; Meshes
 (defobject mesh)
