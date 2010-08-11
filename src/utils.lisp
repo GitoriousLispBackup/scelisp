@@ -6,10 +6,10 @@
 (defmacro defobject (name)
   (let ((typename (scetype name)))
     `(progn
-       (defctype ',typename :pointer)
-       (defcfun ,(format nil "SCE_~@(~a~)_Create" name) ',typename)
+       (defctype ,typename :pointer)
+       (defcfun ,(format nil "SCE_~@(~a~)_Create" name) ,typename)
        (defcfun ,(format nil "SCE_~@(~a~)_Delete" name) :void
-         (,name ',typename)))))
+         (,name ,typename)))))
 
 (defmacro def-sce-method (object name return-type &rest args)
   `(defcfun ,(format nil "SCE_~@(~a~)_~a" object name)
@@ -19,3 +19,4 @@
 
 (defmacro defsetter (object name &rest args)
   `(def-sce-method ,object ,name :void ,@args))
+

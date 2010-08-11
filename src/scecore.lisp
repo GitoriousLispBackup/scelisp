@@ -6,16 +6,11 @@
 (use-foreign-library libscecore)
 
 ;;; Node
-(defctype scenode :pointer)
+(defobject node)
 
 (defcenum nodematrixarray
   (:node-read-matrix 0)
   (:node-write-matix 1))
 
-(defcfun "SCE_Node_Create" scenode)
-(defcfun "SCE_Node_Delete" :void
-  (node scenode))
-
-(defcfun "SCE_Node_GetMatrix" scematrix
-  (node scenode)
+(def-sce-method node "GetMatrix" scematrix
   (id nodematrixarray))

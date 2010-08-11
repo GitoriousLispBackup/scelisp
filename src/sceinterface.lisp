@@ -13,93 +13,67 @@
 (defcfun "SCE_Quit_Interface" :void)
 
 ;;; Shaders
-(defctype sceshader :pointer)
+(defobject shader)
 
 ;;; Textures
-(defctype scetexture :pointer)
+(defobject texture)
 
 ;;; Cameras
-(defctype scecamera :pointer)
-
-(defcfun "SCE_Camera_Create" scecamera)
-(defcfun "SCE_Camera_Delete" :void
-  (camera scecamera))
+(defobject camera)
 
 ;;; Lights
-(defctype scelight :pointer)
+(defobject light)
 
-(defcfun "SCE_Light_Create" scelight)
-(defcfun "SCE_Light_Delete" :void)
-
-(defcfun "SCE_Light_SetColor" :void
-  (light scelight)
+(defsetter light "SetColor"
   (r :float)
   (g :float)
   (b :float))
 
-(defcfun "SCE_Light_Infinite" :void
-  (light scelight)
+(defsetter light "Infinite"
   (inf scebool))
 
-(defcfun "SCE_Light_GetNode" scenode
-  (light scelight))
+(def-sce-method light "GetNode" scenode)
 
 ;;; Meshes
-(defctype scemesh :pointer)
+(defobject mesh)
 
 (defcfun "SCE_Mesh_Load" scemesh
   (fname :string)
   (force :int))
-(defcfun "SCE_Mesh_AutoBuild" :void
-  (mesh scemesh))
+
+(defsetter mesh "AutoBuild")
 
 ;;; Models
-(defctype scemodel :pointer)
+(defobject model)
 
-(defcfun "SCE_Model_Create" scemodel)
-(defcfun "SCE_Model_Delete" :void
-  (model scemodel))
-
-(defcfun "SCE_Model_AddEntity" :int
-  (model scemodel)
+(def-sce-method model "AddEntity" :int
   (level :int)
   (mesh scemesh)
   (shader sceshader)
   (rest :pointer))                      ; TODO: handle "..." args
 
-(defcfun "SCE_Model_AddNewInstance" :int
-  (model scemodel)
+(def-sce-method model "AddNewInstance" :int
   (n :unsigned-int)
   (root scebool)
   (mat :pointer))
 
-(defcfun "SCE_Model_MergeInstances" :int
-  (model scemodel))
+(def-sce-method model "MergeInstances" :int)
 
 ;;; Scenes
-(defctype scescene :pointer)
+(defobject scene)
 
-(defcfun "SCE_Scene_Create" scescene)
-(defcfun "SCE_Scene_Delete" :void
-  (scene scescene))
-
-(defcfun "SCE_Scene_AddCamera" :void
-  (scene scescene)
+(defsetter scene "AddCamera"
   (camera scecamera))
-(defcfun "SCE_Scene_AddLight" :void
-  (scene scescene)
+(defsetter scene "AddLight"
   (light scelight))
-(defcfun "SCE_Scene_AddModel" :void
-  (scene scescene)
+(defsetter scene "AddModel"
   (model scemodel))
 
-(defcfun "SCE_Scene_Update" :void
-  (scene scescene)
+(defsetter scene "Update"
   (camera scecamera)
   (rendertarget scetexture)
   (cubeface :unsigned-int))
-(defcfun "SCE_Scene_Render" :void
-  (scene scescene)
+(defsetter scene "Render"
   (camera scecamera)
   (rendertarget scetexture)
   (cubeface :unsigned-int))

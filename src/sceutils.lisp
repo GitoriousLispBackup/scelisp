@@ -5,8 +5,10 @@
   (t (:default "libsceutils")))
 (use-foreign-library libsceutils)
 
+;;; Bitfields
 (defctype scebitfield :unsigned-int)
 
+;;; Bools
 (define-foreign-type scebool ()
   ()
   (:actual-type :int)
