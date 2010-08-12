@@ -12,6 +12,13 @@
 
 (defcfun "SCE_Quit_Interface" :void)
 
+(defmacro with-interface (&body body)
+  `(unwind-protect
+        (progn 
+          (sce-init-interface 0 0)
+          ,@body)
+     (sce-quit-interface)))
+
 ;;; Shaders
 (defobject shader)
 
@@ -55,6 +62,11 @@
   (force :int))
 
 (defsetter mesh "AutoBuild")
+
+(defmacro with-mesh ((name path) &body body)
+  `(let ((,name (sce-mesh-load ,path 2)))
+     (sce-mesh-autobuild ,name)         ; TODO: has to be here?
+     ,@body))
 
 ;;; Models
 (defobject model)

@@ -35,3 +35,22 @@
        (status scebool))
      (def-sce-method ,object ,(format nil "Is~ad" name)
        scebool)))
+
+(defun get-constructor (object)
+  (symbolicate 'sce- object '-create))
+
+(defun get-destructor (object)
+  (symbolicate 'sce- object '-delete))
+
+(defmacro with-object ((name object) &body body)
+  `(let ((,name (,(get-constructor object))))
+     (unwind-protect
+          (progn ,@body)
+       (,(get-destructor object) ,name))))
+
+(defmacro with-objects (bindings &body body)
+  (if bindings
+      `(with-object ,(first bindings)
+         (with-objects ,(rest bindings)
+           ,@body))
+       `(progn ,@body)))
