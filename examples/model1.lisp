@@ -10,11 +10,10 @@
     (with-interface
       (with-objects ((scene scene)
                      (camera camera)
-                     (light light)
+                     (light light :color '(1.0 1.0 1.0))
                      (model model))
-        (sce-scene-addcamera scene camera)
-        (sce-light-setcolor light 1.0 1.0 1.0)
         (sce-light-infinite light t)
+        (sce-scene-addcamera scene camera)
         (sce-scene-addlight scene light)
         ;; TODO: use relative path
         (with-mesh (mesh "/home/quentin/sce/samples/model1/spaceship.obj")

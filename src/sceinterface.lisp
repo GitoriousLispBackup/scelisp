@@ -28,6 +28,7 @@
 ;;; Cameras
 (defobject camera)
 
+(defconstructor camera)
 ;;; Lights
 (defobject light)
 
@@ -40,6 +41,8 @@
   (r :float)
   (g :float)
   (b :float))
+(eval-when (:compile-toplevel :load-toplevel)
+  (addprop 'light "Color"))
 ;; TODO SetColorv
 ;; TODO GetColor
 ;; TODO GetColorv
@@ -50,10 +53,12 @@
 (defprop light "Angle" :float)
 (defprop light "Intensity" :float)
 (defprop light "Radius" :float)
+
 (defcfun "SCE_Light_ActivateLighting" :void
   (activated scebool))
 (defsetter light "Use")
 
+(defconstructor light)
 ;;; Meshes
 (defobject mesh)
 
@@ -85,6 +90,7 @@
 (def-sce-method model "MergeInstances" :int)
 (def-sce-method model "GetRootNode" scenode)
 
+(defconstructor model)
 ;;; Scenes
 (defobject scene)
 
@@ -103,3 +109,5 @@
   (camera scecamera)
   (rendertarget scetexture)
   (cubeface :unsigned-int))
+
+(defconstructor scene)
