@@ -28,7 +28,7 @@
           (let ((matrix (sce-node-getmatrix
                          (sce-model-getrootnode model)
                          :node-read-matrix)))
-            (sce-matrix4-scale matrix 0.3 0.3 0.3)
+            (sce-matrix4-mulscale matrix 0.3 0.3 0.3)
             (sce-matrix4-mulrotx matrix (coerce pi 'single-float))
             (sdl:with-events ()
               (:quit-event () t)
