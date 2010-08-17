@@ -8,6 +8,16 @@
 ;;; Frustum
 (defctype scefrustum :pointer)
 
+;;; Node
+(defobject node)
+
+(defcenum nodematrixarray
+  (:node-read-matrix 0)
+  (:node-write-matix 1))
+
+(def-sce-method node "GetMatrix" scematrix4
+  (id nodematrixarray))
+
 ;;; Camera
 (defobject camera)
 
@@ -35,15 +45,6 @@
 (def-sce-method camera "Update" :void)
 
 (defconstructor camera)
-;;; Node
-(defobject node)
-
-(defcenum nodematrixarray
-  (:node-read-matrix 0)
-  (:node-write-matix 1))
-
-(def-sce-method node "GetMatrix" scematrix4
-  (id nodematrixarray))
 
 ;;; Geometry
 (defcfun "SCE_Init_Geometry" :int)

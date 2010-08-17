@@ -39,11 +39,11 @@
   (b :float))
 (eval-when (:compile-toplevel :load-toplevel)
   (addprop 'light "Color"))
-;; TODO SetColorv
-;; TODO GetColor
-;; TODO GetColorv
-;; TODO GetPositionv
-;; TODO GetDirectionv
+
+(defprop light "Colorv" scevector)
+(def-sce-method light "GetColor" scevector)
+(def-sce-method light "GetPositionv" scevector)
+(def-sce-method light "GetDirectionv" scevector)
 
 (defstatus light "Infinite")
 (defprop light "Angle" :float)
@@ -66,9 +66,10 @@
 
 (defmacro with-mesh ((name path) &body body)
   `(let ((,name (sce-mesh-load ,path 2)))
-     (when (sce-error-haveerror)
+     ;; Disabled because it throws an error even when the mesh is loaded
+     #|(when (sce-error-haveerror)
        (sce-error-out)
-       (error "Can't load mesh"))
+       (error "Can't load mesh"))|#
      (sce-mesh-autobuild ,name)         ; TODO: has to be here?
      ,@body))
 

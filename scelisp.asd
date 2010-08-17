@@ -8,6 +8,7 @@
             :components
             ((:file "package")
              (:file "utils")
+             (:file "types")
              (:file "sceutils")
              (:file "scecore")
              (:file "sceinterface")))))
