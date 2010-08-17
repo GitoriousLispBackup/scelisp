@@ -15,7 +15,7 @@
 (defmacro with-interface (&body body)
   `(unwind-protect
         (progn 
-          (sce-init-interface 0 0)
+          (sce-init-interface 0 0)      ; TODO: use stdout
           ,@body)
      (sce-quit-interface)))
 
@@ -66,6 +66,9 @@
 
 (defmacro with-mesh ((name path) &body body)
   `(let ((,name (sce-mesh-load ,path 2)))
+     (when (sce-error-haveerror)
+       (sce-error-out)
+       (error "Can't load mesh"))
      (sce-mesh-autobuild ,name)         ; TODO: has to be here?
      ,@body))
 
