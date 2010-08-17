@@ -42,6 +42,22 @@
   (y :float)
   (z :float))
 
+(defcfun "SCE_Matrix4_MulScale" :void
+  (matrix scematrix)
+  (x :float)
+  (y :float)
+  (z :float))
+
+(defcfun "SCE_Matrix4_MulRotX" :void
+  (matrix scematrix)
+  (angle :float))
+(defcfun "SCE_Matrix4_MulRotY" :void
+  (matrix scematrix)
+  (angle :float))
+(defcfun "SCE_Matrix4_MulRotZ" :void
+  (matrix scematrix)
+  (angle :float))
+
 ;;; Errors
 (defcfun "SCE_Error_HaveError" scebool)
 (defcfun "SCE_Error_Out" :void)
