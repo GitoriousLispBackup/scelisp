@@ -25,10 +25,6 @@
 ;;; Textures
 (defobject texture)
 
-;;; Cameras
-(defobject camera)
-
-(defconstructor camera)
 ;;; Lights
 (defobject light)
 
