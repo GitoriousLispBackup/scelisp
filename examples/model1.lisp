@@ -12,6 +12,7 @@
                      (camera camera)
                      (light light :color '(1.0 0.5 0.5))
                      (model model))
+        (sce-camera-setviewport camera 0 0 800 600)
         (sce-light-infinite light t)
         (sce-matrix4-translate (sce-node-getmatrix
                                 (sce-light-getnode light) :node-read-matrix)
