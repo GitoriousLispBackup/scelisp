@@ -95,7 +95,7 @@
 (defconstructor model)
 
 ;;; SceneEntity
-(defobject sceneentity)
+(defobject (sceneentity "SceneEntity"))
 
 (def-sce-method sceneentity "Init" :void)
 (def-sce-method sceneentity "RemoveEntity" :void)

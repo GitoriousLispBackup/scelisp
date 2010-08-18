@@ -1,21 +1,31 @@
 (in-package :scelisp)
 
 (eval-when (:compile-toplevel :load-toplevel)
-  (defvar *types-properties* (make-hash-table :test 'eq)))
+  (defvar *types* (make-hash-table :test 'eq))
+  (defvar *types-properties* (make-hash-table :test 'eq))
+  (defun scetype-string (name)
+    (let ((str (gethash name *types*)))
+      (if str
+          str
+          (format nil "~@(~a~)" name)))))
 
 (defun scetype (name)
   (symbolicate 'sce name))
 
 (defmacro defobject (name)
-  (let ((typename (scetype name)))
+  (when (listp name)
+    (setf (gethash (first name) *types*) (second name))
+    (setf name (first name)))           ; a bit ugly
+  (let ((typename (scetype name))
+        (string-name (scetype-string name)))
     `(progn
        (defctype ,typename :pointer)
-       (defcfun ,(format nil "SCE_~@(~a~)_Create" name) ,typename)
-       (defcfun ,(format nil "SCE_~@(~a~)_Delete" name) :void
+       (defcfun ,(format nil "SCE_~a_Create" string-name) ,typename)
+       (defcfun ,(format nil "SCE_~a_Delete" string-name) :void
          (,name ,typename)))))
 
 (defmacro def-sce-method (object name return-type &rest args)
-  `(defcfun ,(format nil "SCE_~@(~a~)_~a" object name)
+  `(defcfun ,(format nil "SCE_~a_~a" (scetype-string object) name)
        ,return-type
      (,object ,(scetype object))
      ,@args))
