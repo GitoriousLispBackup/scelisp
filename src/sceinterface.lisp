@@ -28,6 +28,36 @@
 ;;; Material
 (defobject material)
 
+(def-sce-method material "Init" :void)
+
+(defsetter material "SetColor"
+  (type sceenum)
+  (r :float)
+  (g :float)
+  (b :float)
+  (a :float))
+(defsetter material "SetColorv"
+  (type sceenum)
+  (color scevector))
+
+(def-sce-method material "GetColor" scevector
+  (type sceenum))
+;; GetColorv is useless here
+
+(defsetter material "ActivatePointSprite"
+  (activated scebool))
+(defsetter material "EnablePointSprite")
+(defsetter material "DisablePointSprite")
+(defsetter material "ActivateBlending"
+  (activated scebool))
+(defsetter material "EnableBlending")
+(defsetter material "DisableBlending")
+(defsetter material "SetBlending"
+  (src sceenum)
+  (dst sceenum))
+
+(defsetter material "Use")
+
 ;;; Light
 (defobject light)
 

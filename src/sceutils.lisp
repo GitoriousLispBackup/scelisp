@@ -5,7 +5,8 @@
   (t (:default "libsceutils")))
 (use-foreign-library libsceutils)
 
-;;; Bitfields
+;;; Types defined in SCEType.h
+(defctype sceenum :unsigned-int)
 (defctype scebitfield :unsigned-int)
 
 ;;; Inert
