@@ -34,14 +34,23 @@
   (with-foreign-slots ((toadd) inert sceinertvar)
     (setf toadd (funcall op toadd value))))
 
-(defmacro with-inertvar ((var &optional coeff accum) &body body)
+(defwith inertvar (var &optional coeff accum)
+  `(with-foreign-object (,var 'sceinertvar)
+     (sce-inert-init ,var)
+     ,(when coeff
+            `(sce-inert-setcoefficient ,var ,coeff))
+     ,(when var
+            `(sce-inert-accum ,var ,accum))
+     ,@body))
+
+#|(defmacro with-inertvar ((var &optional coeff accum) &body body)
   `(with-foreign-object (,var 'sceinertvar)
      (sce-inert-init ,var)
      ,(when coeff
        `(sce-inert-setcoefficient ,var ,coeff))
      ,(when var
        `(sce-inert-accum ,var ,accum))
-     ,@body))
+     ,@body))|#
 
 ;;; Bools
 (define-foreign-type scebool-type ()

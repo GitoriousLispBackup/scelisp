@@ -68,16 +68,36 @@
 (defun get-destructor (object)
   (symbolicate 'sce- object '-delete))
 
-(defmacro with-object ((name object &rest args) &body body)
+(defmacro defwith (name specs &body body)
+  (let* ((with-name (symbolicate 'with- name))
+         (with-names (symbolicate with-name 's)))
+    `(progn
+       (defmacro ,with-name (,specs &body body)
+         ,@body)
+       (defmacro ,with-names (bindings &body body)
+         (if bindings
+             `(,',with-name ,(first bindings)
+                (,',with-names ,(rest bindings)
+                  ,@body))
+             `(progn ,@body))))))
+
+(defwith object (name object &rest args)
   `(let ((,name (funcall ',(get-constructor object)
-                       ,@args)))
+                         ,@args)))
      (unwind-protect
           (progn ,@body)
        (,(get-destructor object) ,name))))
 
-(defmacro with-objects (bindings &body body)
+#|(defmacro with-object ((name object &rest args) &body body)
+  `(let ((,name (funcall ',(get-constructor object)
+                       ,@args)))
+     (unwind-protect
+          (progn ,@body)
+       (,(get-destructor object) ,name))))|#
+
+#|(defmacro with-objects (bindings &body body)
   (if bindings
       `(with-object ,(first bindings)
          (with-objects ,(rest bindings)
            ,@body))
-       `(progn ,@body)))
+       `(progn ,@body)))|#
