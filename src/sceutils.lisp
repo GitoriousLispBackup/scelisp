@@ -8,6 +8,41 @@
 ;;; Bitfields
 (defctype scebitfield :unsigned-int)
 
+;;; Inert
+(defctype sceinert :pointer)            ; for def-sce-method, which takes a pointer
+
+(defcstruct sceinertvar
+  "Variable with inertia"
+  (var :float)
+  (accum :int)
+  (coeff :float)
+  (toadd :float)
+  (real :float))
+
+(def-sce-method inert "Init" :void)
+(def-sce-method inert "Accum" :void
+  (accum :int))
+(defsetter inert "SetCoefficient"
+  (coeff :float))
+(def-sce-method inert "Set" :void
+  (val :float))
+(def-sce-method inert "Get" :float)
+(def-sce-method inert "Compute" :void)
+(def-sce-method inert "Null" :void)
+
+(defun sce-inert-operator (inert op value)
+  (with-foreign-slots ((toadd) inert sceinertvar)
+    (setf toadd (funcall op toadd value))))
+
+(defmacro with-inertvar ((var &optional coeff accum) &body body)
+  `(with-foreign-object (,var 'sceinertvar)
+     (sce-inert-init ,var)
+     ,(when coeff
+       `(sce-inert-setcoefficient ,var ,coeff))
+     ,(when var
+       `(sce-inert-accum ,var ,accum))
+     ,@body))
+
 ;;; Bools
 (define-foreign-type scebool-type ()
   ()

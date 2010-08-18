@@ -18,6 +18,8 @@
 (def-sce-method node "GetMatrix" scematrix4
   (id nodematrixarray))
 
+(defsetter node "HasMoved")
+
 ;;; Camera
 (defobject camera)
 
