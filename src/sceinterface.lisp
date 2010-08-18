@@ -19,18 +19,20 @@
           ,@body)
      (sce-quit-interface)))
 
-;;; Shaders
+;;; Shader
 (defobject shader)
 
-;;; Textures
+;;; Texture
 (defobject texture)
 
-;;; Lights
+;;; Material
+(defobject material)
+
+;;; Light
 (defobject light)
 
 (defstatus light "Activate")
 
-;; TODO GetIterator
 (def-sce-method light "GetNode" scenode)
 
 (defsetter light "SetColor"
@@ -91,7 +93,35 @@
 (def-sce-method model "GetRootNode" scenode)
 
 (defconstructor model)
-;;; Scenes
+
+;;; SceneEntity
+(defobject sceneentity)
+
+(def-sce-method sceneentity "Init" :void)
+(def-sce-method sceneentity "RemoveEntity" :void)
+(def-sce-method sceneentity "AddTexture" :int
+  (tex scetexture))
+(def-sce-method sceneentity "RemoveTexture" :void
+  (tex scetexture))
+
+(defprop sceneentity "Mesh" scemesh)
+(defprop sceneentity "Shader" sceshader)
+(defprop sceneentity "Material" scematerial)
+
+(defsetter sceneentity "SetupBoundingVolume"
+  (volume :int))
+
+(def-sce-method sceneentity "HasResourceOfType" scebool
+  (type :int))
+(def-sce-method sceneentity "HasInstance" scebool)
+
+(defsetter sceneentity "ApplyProperties")
+(defsetter sceneentity "UseRessources")
+(defsetter sceneentity "Render")
+
+(defconstructor sceneentity)
+
+;;; Scene
 (defobject scene)
 
 (defsetter scene "AddCamera"
@@ -109,5 +139,7 @@
   (camera scecamera)
   (rendertarget scetexture)
   (cubeface :unsigned-int))
+
+(defsetter scene "ClearBuffers")
 
 (defconstructor scene)
