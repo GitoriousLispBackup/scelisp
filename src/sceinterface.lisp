@@ -23,7 +23,44 @@
 (defobject shader)
 
 ;;; Texture
+;; TODO: SCE_Texture_Create isn't "standard" (two params)
 (defobject texture)
+
+(defsetter texture "Init")
+(defsetter texture "SetupParameters")
+(defsetter texture "MakeRender"
+  (type :int))
+(defsetter texture "MakeRenderCube")
+
+(defsetter texture "SetFilter"
+  (filter :int))
+(defsetter texture "Pixelize"
+  (p scebool))
+(defsetter texture "SetParam"
+  (pname sceenum)
+  (param :int))
+(defsetter texture "SetParamf"
+  (pname sceenum)
+  (param :float))
+(defsetter texture "SetUnit"
+  (unit :unsigned-int))
+
+(def-sce-method texture "GetUnit" :unsigned-int)
+(def-sce-method texture "GetMatrix" scematrix4)
+(def-sce-method texture "GetType" :int)
+(def-sce-method texture "GetWidth" :int
+  (target :int)
+  (level :int))
+(def-sce-method texture "GetHeight" :int
+  (target :int)
+  (level :int))
+
+;; TODO: handle SCE_ERROR and SCE_OK (and throw an error)
+(def-sce-method texture "Build" :int
+  (use-mipmap scebool))
+(def-sce-method texture "Update" :int)
+
+;; TODO: from SCETexture.c:481
 
 ;;; Material
 (defobject material)
