@@ -68,13 +68,13 @@
   (force :int)
   (names stringlist))
 
-;; We want to use format's control-strings instead of ugly printf ones
-(defun sce-texture-load (type w h d force control-string &rest args)
-  (declare (type fixnum w h d force)
-           (type string control-string))
-  (foreign-funcall "SCE_Texture_Load"
-                   :int type :int w :int h :int d :int force
-                   :string (apply #'format nil control-string args)))
+(defcfun "SCE_Texture_Load" scetexture
+  (type :int)
+  (w :int)
+  (h :int)
+  (d :int)
+  (force :int)
+  &rest)
 
 (def-sce-method texture "AddRenderTexture" :int
   (id :int)
@@ -191,7 +191,7 @@
   (level :int)
   (mesh scemesh)
   (shader sceshader)
-  (rest :pointer))                      ; TODO: handle "..." args
+  &rest)
 
 (def-sce-method model "AddNewInstance" :int
   (n :unsigned-int)
@@ -211,9 +211,9 @@
 
 ;; TODO: ugly, but SCE's interface for those types is weird
 (eval-when (:compile-toplevel :load-toplevel)
-  (setf (gethash 'scesceneentityinstance *types*) "SceneEntity"
-        (gethash 'scesceneentityproperties *types*) "SceneEntity"
-        (gethash 'scesceneentitygroup *types*) "SceneEntity"))
+  (setf (gethash 'sceneentityinstance *types*) "SceneEntity"
+        (gethash 'sceneentityproperties *types*) "SceneEntity"
+        (gethash 'sceneentitygroup *types*) "SceneEntity"))
 
 ;;; SceneEntityInstance
 (defsetter sceneentityinstance "InitInstance")
@@ -241,7 +241,6 @@
 (defsetter sceneentityinstance "DetermineInstanceLOD"
   (cam scecamera))
 
-
 ;;; SceneEntityProperties
 (defsetter sceneentityproperties "InitProperties")
 
@@ -251,7 +250,7 @@
 (defsetter sceneentitygroup "DeleteGroup")
 
 (defsetter sceneentitygroup "AddEntity"
-  (entity sceneentity))
+  (entity scesceneentity))
 
 ;;; SceneEntity
 (def-sce-method sceneentity "Init" :void)
@@ -261,7 +260,7 @@
 (def-sce-method sceneentity "RemoveTexture" :void
   (tex scetexture))
 
-(def-sce-method sceneentity "GetProperties" scesceneentitypropeties)
+(def-sce-method sceneentity "GetProperties" scesceneentityproperties)
 
 (defprop sceneentity "Mesh" scemesh)
 (defprop sceneentity "Shader" sceshader)
