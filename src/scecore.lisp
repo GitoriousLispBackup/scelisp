@@ -11,12 +11,16 @@
 ;;; Node
 (defobject node)
 
-(defcenum nodematrixarray
+(defcenum scenodetype
+  :single-matrix-node
+  :tree-node)
+
+(defcenum scenodematrixarray
   (:node-read-matrix 0)
-  (:node-write-matix 1))
+  :node-write-matix)
 
 (def-sce-method node "GetMatrix" scematrix4
-  (id nodematrixarray))
+  (id scenodematrixarray))
 
 (defsetter node "HasMoved")
 

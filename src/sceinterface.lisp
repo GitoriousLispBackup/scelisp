@@ -165,7 +165,8 @@
 (defsetter light "Use")
 
 (defconstructor light)
-;;; Meshes
+
+;;; Mesh
 (defobject mesh)
 
 (defcfun "SCE_Mesh_Load" scemesh
@@ -183,7 +184,7 @@
      (sce-mesh-autobuild ,name)         ; TODO: has to be here?
      ,@body))
 
-;;; Models
+;;; Model
 (defobject model)
 
 (def-sce-method model "AddEntity" :int
@@ -202,15 +203,65 @@
 
 (defconstructor model)
 
-;;; SceneEntity
+;;; SceneEntity & co
 (defobject (sceneentity "SceneEntity"))
+(defctype scesceneentityinstance :pointer)
+(defctype scesceneentityproperties :pointer)
+(defctype scesceneentitygroup :pointer)
 
+;; TODO: ugly, but SCE's interface for those types is weird
+(eval-when (:compile-toplevel :load-toplevel)
+  (setf (gethash 'scesceneentityinstance *types*) "SceneEntity"
+        (gethash 'scesceneentityproperties *types*) "SceneEntity"
+        (gethash 'scesceneentitygroup *types*) "SceneEntity"))
+
+;;; SceneEntityInstance
+(defsetter sceneentityinstance "InitInstance")
+(defcfun "SCE_SceneEntity_CreateInstance" scesceneentityinstance)
+(defsetter sceneentityinstance "DeleteInstance")
+
+(def-sce-method sceneentityinstance "DupInstance" scesceneentityinstance)
+(defsetter sceneentityinstance "ReplaceInstanceToEntity")
+(defsetter sceneentityinstance "RemoveInstanceFromEntity")
+
+(def-sce-method sceneentityinstance "GetInstanceNode" scenode)
+(def-sce-method sceneentityinstance "GetInstanceNodeType" scenodetype)
+;; TODO: GetInstanceInstance, GetInstanceElement, GetInstanceLOD
+(def-sce-method sceneentityinstance "GetInstanceGroup" scesceneentitygroup)
+
+(defprop sceneentityinstance "InstanceData" :pointer)
+
+(def-sce-method sceneentityinstance "IsBBInFrustum" scebool
+  (cam scecamera))
+(def-sce-method sceneentityinstance "IsBSInFrustum" scebool
+  (cam scecamera))
+(def-sce-method sceneentityinstance "IsInstanceInFrustum" scebool
+  (cam scecamera))
+
+(defsetter sceneentityinstance "DetermineInstanceLOD"
+  (cam scecamera))
+
+
+;;; SceneEntityProperties
+(defsetter sceneentityproperties "InitProperties")
+
+;;; SceneEntityGroup
+(defsetter sceneentitygroup "InitGroup")
+(defcfun "SCE_SceneEntity_CreateGroup" scesceneentitygroup)
+(defsetter sceneentitygroup "DeleteGroup")
+
+(defsetter sceneentitygroup "AddEntity"
+  (entity sceneentity))
+
+;;; SceneEntity
 (def-sce-method sceneentity "Init" :void)
 (def-sce-method sceneentity "RemoveEntity" :void)
 (def-sce-method sceneentity "AddTexture" :int
   (tex scetexture))
 (def-sce-method sceneentity "RemoveTexture" :void
   (tex scetexture))
+
+(def-sce-method sceneentity "GetProperties" scesceneentitypropeties)
 
 (defprop sceneentity "Mesh" scemesh)
 (defprop sceneentity "Shader" sceshader)
@@ -222,10 +273,15 @@
 (def-sce-method sceneentity "HasResourceOfType" scebool
   (type :int))
 (def-sce-method sceneentity "HasInstance" scebool)
+;; TODO GetInstancesGroup
 
+(defsetter sceneentity "Flush")
 (defsetter sceneentity "ApplyProperties")
 (defsetter sceneentity "UseRessources")
 (defsetter sceneentity "Render")
+
+(defsetter sceneentity "AddInstanceToEntity"
+  (einst scesceneentityinstance))
 
 (defconstructor sceneentity)
 
