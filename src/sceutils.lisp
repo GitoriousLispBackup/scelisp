@@ -44,15 +44,6 @@
             `(sce-inert-accum ,var ,accum))
      ,@body))
 
-#|(defmacro with-inertvar ((var &optional coeff accum) &body body)
-  `(with-foreign-object (,var 'sceinertvar)
-     (sce-inert-init ,var)
-     ,(when coeff
-       `(sce-inert-setcoefficient ,var ,coeff))
-     ,(when var
-       `(sce-inert-accum ,var ,accum))
-     ,@body))|#
-
 ;;; Bools
 (define-foreign-type scebool-type ()
   ()
@@ -123,7 +114,11 @@
   (matrix scematrix4)
   (angle :float))
 
-;;; Errors
+;;; Rectangle
+(defctype sceintrect :pointer)
+(defctype scefloatrect :pointer)
+
+;;; Error
 (defcfun "SCE_Error_HaveError" scebool)
 (defcfun "SCE_Error_Out" :void)
 (defcfun "SCE_Error_Clear" :void)

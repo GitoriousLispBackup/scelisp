@@ -60,7 +60,48 @@
   (use-mipmap scebool))
 (def-sce-method texture "Update" :int)
 
-;; TODO: from SCETexture.c:481
+(defcfun "SCE_Texture_Loadv" scetexture
+  (type :int)
+  (w :int)
+  (h :int)
+  (d :int)
+  (force :int)
+  (names stringlist))
+
+;; We want to use format's control-strings instead of ugly printf ones
+(defun sce-texture-load (type w h d force control-string &rest args)
+  (declare (type fixnum w h d force)
+           (type string control-string))
+  (foreign-funcall "SCE_Texture_Load"
+                   :int type :int w :int h :int d :int force
+                   :string (apply #'format nil control-string args)))
+
+(def-sce-method texture "AddRenderTexture" :int
+  (id :int)
+  (new scetexture))
+
+(defcfun "SCE_Texture_Blit" :void
+  (rdst sceintrect)
+  (dst scetexture)
+  (rsrc sceintrect)
+  (src scetexture))
+(defcfun "SCE_Texture_Blitf" :void
+  (rdst scefloatrect)
+  (dst scetexture)
+  (rsrc scefloatrect)
+  (src scetexture))
+
+(defcfun "SCE_Texture_RenderQuad" :void
+  (r scefloatrect))
+
+(defsetter texture "Set")
+(defsetter texture "Use")
+(defsetter texture "RenderTo"
+  (cubeface :unsigned-int))
+
+(defcfun "SCE_Texture_Flush" :void)
+(defcfun "SCE_Texture_BeginLot" :void)
+(defcfun "SCE_Texture_EndLot" :void)
 
 ;;; Material
 (defobject material)
