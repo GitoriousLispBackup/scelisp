@@ -15,17 +15,21 @@
   `(vector ,@(loop for x from 0 to 2 collect
                   `(mem-aref ,value :float ,x))))
 
-;;; Lists of strings, used by *Loadv functions
-(define-foreign-type stringlist-type ()
-  ()
-  (:actual-type :pointer)
-  (:simple-parser stringlist))
+;;; List types, used by some *v functions
+(defmacro deflist-type (name &optional (type name))
+  (let ((typename (symbolicate name 'list-type)))
+    `(progn
+       (define-foreign-type ,typename ()
+         ()
+         (:actual-type :pointer)
+         (:simple-parser ,(symbolicate name 'list)))
+       (defmethod expand-to-foreign (value (type ,typename))
+         `(foreign-alloc ,',type
+                         :initial-contents ,value))
+       ;; Not implemented yet, and won't never be implemented I guess
+       ;; (we don't seem to need functions returning lists)
+       (defmethod expand-from-foreign (value (type ,typename))
+         `(error "Can't expand from foreign to list")))))
 
-(defmethod expand-to-foreign (value (type stringlist-type))
-  `(foreign-alloc :string
-                  :initial-contents ,value))
-
-;; Not implemented yet, and won't never be implemented I guess
-;; (since we don't need functions returning string lists)
-(defmethod expand-from-foreign (value (type stringlist-type))
-  `(error "Can't expand from foreign to stringlist"))
+(deflist-type string :string)
+(deflist-type scetexture)
