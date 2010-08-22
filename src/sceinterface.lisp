@@ -192,7 +192,7 @@
   (level :int)
   (mesh scemesh)
   (shader sceshader)
-  (textures :pointer))
+  (textures scetexturelist))
 (def-sce-method model "AddEntity" :int
   (level :int)
   (mesh scemesh)
