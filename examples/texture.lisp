@@ -20,7 +20,7 @@
         (sce-scene-addcamera scene camera)
         (sce-scene-addlight scene light)
         ;; TODO: use relative path
-        (with-mesh (mesh "/home/quentin/sce/samples/model1/spaceship.obj")
+        (with-mesh (mesh "/home/quentin/scelisp/examples/cube.obj")
           (with-foreign-object (str :pointer)
             (with-foreign-strings ((foo "/home/quentin/scelisp/examples/lisp.png"))
               (setf (mem-aref str :string 0) foo)
@@ -46,6 +46,7 @@
                              (when (sce-error-haveerror)
                                (sce-error-out))
                              (sce-matrix4-mulrotz matrix 0.02)
+                             (sce-matrix4-mulroty matrix 0.02)
                              (sce-scene-update scene camera (null-pointer) 0)
                              (sce-scene-render scene camera (null-pointer) 0)
                              (sdl:update-display)))))))))))))
