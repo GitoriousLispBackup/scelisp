@@ -26,11 +26,17 @@
        (defmethod expand-to-foreign (value (type ,typename))
          ;; TODO: wtf?
          ,(if (keywordp type)
-             ``(foreign-alloc ,',type :initial-contents ,value)
-             ``(foreign-alloc ',',type :initial-contents ,value)))
+              ``(foreign-alloc ,',type :initial-contents (append ,value
+                                                                 (list (null-pointer))))
+              ``(foreign-alloc ',',type :initial-contents (append ,value
+                                                                  (list (null-pointer))))))
        ;; Not implemented yet, and won't never be implemented I guess
        ;; (we don't seem to need functions returning lists)
        (defmethod expand-from-foreign (value (type ,typename))
-         `(error "Can't expand from foreign to list")))))
+         `(error "Can't expand from foreign to list"))
+       ;; TODO: free each list element ?
+       (defmethod free-translated-object (pointer (type ,typename) param)
+         (declare (ignore param))
+         (foreign-free pointer)))))
 
 (deflist-type string :string)

@@ -67,7 +67,7 @@
   (h :int)
   (d :int)
   (force :int)
-  (names :pointer))
+  (names stringlist))
 
 (defcfun "SCE_Texture_Load" scetexture
   (type :int)
