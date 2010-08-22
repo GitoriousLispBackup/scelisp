@@ -25,6 +25,7 @@
 ;;; Texture
 ;; TODO: SCE_Texture_Create isn't "standard" (two params)
 (defobject texture)
+(deflist-type scetexture)
 
 (defsetter texture "Init")
 (defsetter texture "SetupParameters")
@@ -66,7 +67,7 @@
   (h :int)
   (d :int)
   (force :int)
-  (names stringlist))
+  (names :pointer))
 
 (defcfun "SCE_Texture_Load" scetexture
   (type :int)
@@ -187,6 +188,11 @@
 ;;; Model
 (defobject model)
 
+(def-sce-method model "AddEntityv" :int
+  (level :int)
+  (mesh scemesh)
+  (shader sceshader)
+  (textures :pointer))
 (def-sce-method model "AddEntity" :int
   (level :int)
   (mesh scemesh)

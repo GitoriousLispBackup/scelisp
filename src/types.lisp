@@ -24,12 +24,13 @@
          (:actual-type :pointer)
          (:simple-parser ,(symbolicate name 'list)))
        (defmethod expand-to-foreign (value (type ,typename))
-         `(foreign-alloc ,',type
-                         :initial-contents ,value))
+         ;; TODO: wtf?
+         ,(if (keywordp type)
+             ``(foreign-alloc ,',type :initial-contents ,value)
+             ``(foreign-alloc ',',type :initial-contents ,value)))
        ;; Not implemented yet, and won't never be implemented I guess
        ;; (we don't seem to need functions returning lists)
        (defmethod expand-from-foreign (value (type ,typename))
          `(error "Can't expand from foreign to list")))))
 
 (deflist-type string :string)
-(deflist-type scetexture)
