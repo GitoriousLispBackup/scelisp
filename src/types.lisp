@@ -40,3 +40,14 @@
          (foreign-free pointer)))))
 
 (deflist-type string :string)
+
+;; To be used with sce* types
+(defwith list (name type list)
+  `(let ((,name (foreign-alloc ',type
+                               :initial-contents (append ,list
+                                                         (list (null-pointer))))))
+     ,@body
+     ;; TODO: crash everything. Maybe free each element of the list
+     ;; before ? But that would be incompatible with other with-* macros
+;     (foreign-free ,name)
+     ))

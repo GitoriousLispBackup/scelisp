@@ -24,7 +24,8 @@
           (let ((tex (sce-texture-loadv 0 0 0 0 0
                                         '("/home/quentin/scelisp/examples/lisp.png"))))
             (sce-texture-build tex t)
-            (sce-model-addentityv model 0 mesh (null-pointer) (list tex))
+            (with-list (texs scetexture (list tex))
+              (sce-model-addentityv model 0 mesh (null-pointer) texs))
             (sce-model-addnewinstance model 0 1 (null-pointer))
             (sce-model-mergeinstances model)
             (sce-scene-addmodel scene model)
@@ -42,4 +43,4 @@
                        (sce-matrix4-mulroty matrix 0.02)
                        (sce-scene-update scene camera (null-pointer) 0)
                        (sce-scene-render scene camera (null-pointer) 0)
-                       (sdl:update-display)))))))))))
+                       (sdl:update-display))))))))))
