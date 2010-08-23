@@ -25,7 +25,7 @@
 ;;; Texture
 ;; TODO: SCE_Texture_Create isn't "standard" (two params)
 (defobject texture)
-(deflist-type scetexture)
+;(deflist-type scetexture)
 
 (defsetter texture "Init")
 (defsetter texture "SetupParameters")
@@ -109,8 +109,14 @@
 
 (def-sce-method material "Init" :void)
 
+(eval-when (:compile-toplevel :load-toplevel)
+  (addprop 'material "Color"))
+
+(defcenum scecolortype
+  :diffuse :emissive :specular :ambiant :shineness)
+
 (defsetter material "SetColor"
-  (type sceenum)
+  (type scecolortype)
   (r :float)
   (g :float)
   (b :float)
@@ -137,6 +143,7 @@
 
 (defsetter material "Use")
 
+(defconstructor material)
 ;;; Light
 (defobject light)
 
@@ -192,7 +199,7 @@
   (level :int)
   (mesh scemesh)
   (shader sceshader)
-  (textures scetexturelist))
+  (textures :pointer))
 (def-sce-method model "AddEntity" :int
   (level :int)
   (mesh scemesh)
