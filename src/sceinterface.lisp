@@ -307,6 +307,9 @@
 (defsetter scene "AddModel"
   (model scemodel))
 
+(defsetter scene "RemoveModel"
+  (model scemodel))
+
 (defsetter scene "Update"
   (camera scecamera)
   (rendertarget scetexture)

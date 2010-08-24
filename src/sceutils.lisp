@@ -104,6 +104,19 @@
   (y :float)
   (z :float))
 
+(defcfun "SCE_Matrix4_MulTranslate" :void
+  (matrix scematrix4)
+  (x :float)
+  (y :float)
+  (z :float))
+
+(defcfun "SCE_Matrix4_MulRotate" :void
+  (matrix scematrix4)
+  (a :float)
+  (x :float)
+  (y :float)
+  (z :float))
+
 (defcfun "SCE_Matrix4_MulRotX" :void
   (matrix scematrix4)
   (angle :float))
@@ -113,6 +126,17 @@
 (defcfun "SCE_Matrix4_MulRotZ" :void
   (matrix scematrix4)
   (angle :float))
+
+(defcfun "SCE_Matrix4_MulCopy" :pointer
+  (m scematrix4)
+  (n scematrix4))
+
+(defcfun "SCE_Matrix4_Projection" :void
+  (matrix scematrix4)
+  (a :float)
+  (r :float)
+  (n :float)
+  (f :float))
 
 ;;; Rectangle
 (defctype sceintrect :pointer)
