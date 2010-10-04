@@ -25,9 +25,6 @@
 (defcfun "SCE_Shader_GetResourceType" :int)
 ;; TODO: SCE_Shader_InitParam/DeleteParam
 (defsetter shader "Init")
-;;; TODO: *CG and *GLSL not usefull for a high level API
-(defsetter shader "DeleteCG")
-(defsetter shader "DeleteGLSL")
 (defsetter shader "Delete")
 ;; TODO: SCE_Shader_GetSceneResource
 (def-sce-method shader "GetLanguage" :int)
@@ -36,22 +33,40 @@
 ;; TODO: SCE_Shader_SearchTypes
 ;; TODO: SCE_Shader_SetPosFile
 ;; TODO: SCE_Shader_Load*
-(def-sce-method shader "BuildCG" :int)
-(def-sce-method shader "BuildGLSL" :int)
 (def-sce-method shader "Build" :int)
 (def-sce-method shader "AddSource" :int
   (type :int)
   (src :string))
-
-(def-sce-method "GetIndexCG" :int
-  (t :int)
-  (n :string))
-(def-sce-method "GetIndexGLSL" :int
-  (t :int)
-  (n :string))
 (def-sce-method "GetIndex" :int
   (type :int)
   (name :string))
+(def-sce-method "GetAttribIndex" :int
+  (name :string))
+
+(defcfun "SCE_Shader_Param" :void
+  (type :int)
+  (name :string)
+  (val :int))
+
+(defcfun "SCE_Shader_Paramf" :void
+  (type :int)
+  (name :string)
+  (val :float))
+;; TODO: SCE_Shader_Param*fv
+(defcfun "SCE_Shader_SetParam" :void
+  (index :int)
+  (val :int))
+(defcfun "SCE_Shader_SetParamf" :void
+  (index :int)
+  (val :float))
+;; TODO: SCE_Shader_SetParam*fv
+
+(defcfun "SCE_Shader_SetMatrix3" :void
+  (index :int)
+  (m scematrix3))
+(defcfun "SCE_Shader_SetMatrix4" :void
+  (index :int)
+  (m scematrix4))
 
 ;;; Texture
 ;; TODO: SCE_Texture_Create isn't "standard" (two params)
