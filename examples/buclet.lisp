@@ -72,7 +72,7 @@
 (defun add-body (scene mesh)
   (let ((model (make-model))
         (body (buclet:create-rigid-body 10.0 *fall-shape*)))
-    (sce-model-addentityv model 0 mesh (null-pointer) (null-pointer))
+    (sce-model-addnewentityv model 0 mesh (null-pointer) (null-pointer))
     (sce-model-addnewinstance model 0 1 (null-pointer))
     (sce-model-mergeinstances model)
     (sce-scene-addmodel scene model)
