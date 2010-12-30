@@ -1,4 +1,3 @@
-(require :lispbuilder-sdl)
 (require :scelisp)
 
 (in-package :scelisp)
@@ -19,13 +18,12 @@
                                1.0 2.4 1.0)
         (sce-scene-addcamera scene camera)
         (sce-scene-addlight scene light)
-        ;; TODO: use relative path
-        (with-mesh (mesh "/home/quentin/scelisp/examples/cube.obj")
+        (with-mesh (mesh "cube.obj")
           (let ((tex (sce-texture-loadv 0 0 0 0 0
-                                        '("/home/quentin/scelisp/examples/lisp.png"))))
+                                        '("lisp.png"))))
             (sce-texture-build tex t)
             (with-list (texs scetexture (list tex))
-              (sce-model-addentityv model 0 mesh (null-pointer) texs))
+              (sce-model-addnewentityv model 0 0 mesh (null-pointer) texs))
             (sce-model-addnewinstance model 0 1 (null-pointer))
             (sce-model-mergeinstances model)
             (sce-scene-addmodel scene model)

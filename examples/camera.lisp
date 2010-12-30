@@ -18,8 +18,7 @@
                                  1.0 2.4 1.0)
           (sce-scene-addcamera scene camera)
           (sce-scene-addlight scene light)
-          ;; TODO: use relative path
-          (with-mesh (mesh "/home/quentin/sce/samples/data/spaceship.obj")
+          (with-mesh (mesh "cube.obj")
             (sce-model-addnewentityv model 0 1 mesh (null-pointer) (null-pointer))
             (sce-model-addnewinstance model 0 1 (null-pointer))
             (sce-model-mergeinstances model)

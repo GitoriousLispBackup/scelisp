@@ -406,7 +406,7 @@
         (matrix (if matrix matrix (gensym))))
     `(with-object (,model model)
        (with-mesh (,mesh ,path)
-         (sce-model-addnewentityv ,model 0 ,mesh (null-pointer) (null-pointer))
+         (sce-model-addnewentityv ,model 0 0 ,mesh (null-pointer) (null-pointer))
          (sce-model-addnewinstance ,model 0 1 (null-pointer))
          (sce-model-mergeinstances ,model)
          (sce-scene-addmodel *scene* ,model)

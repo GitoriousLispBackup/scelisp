@@ -3,7 +3,6 @@
 ;;; API, see aerique's patch at
 ;;; http://code.google.com/p/bullet/issues/detail?id=43
 (require :scelisp)
-(require :lispbuilder-sdl)
 (require :buclet)
 
 (in-package :scelisp)
@@ -39,7 +38,7 @@
                                1.0 2.4 1.0)
         (sce-scene-addcamera scene camera)
         (sce-scene-addlight scene light)
-        (with-mesh (mesh "/home/quentin/scelisp/examples/cube.obj")
+        (with-mesh (mesh "cube.obj")
           (let ((last-time (get-internal-real-time)))
             (sdl:with-events ()
               (:quit-event ()
@@ -53,6 +52,7 @@
                          (buclet:step-simulation *dynamics-world* delta)
                          (setf last-time time))
                        (draw-bodies)
+                       ;; TODO: the bodies don't move anymore
                        (sce-scene-update scene camera (null-pointer) 0)
                        (sce-scene-render scene camera (null-pointer) 0)
                        (sdl:update-display)))))))))
@@ -72,7 +72,7 @@
 (defun add-body (scene mesh)
   (let ((model (make-model))
         (body (buclet:create-rigid-body 10.0 *fall-shape*)))
-    (sce-model-addnewentityv model 0 mesh (null-pointer) (null-pointer))
+    (sce-model-addnewentityv model 0 0 mesh (null-pointer) (null-pointer))
     (sce-model-addnewinstance model 0 1 (null-pointer))
     (sce-model-mergeinstances model)
     (sce-scene-addmodel scene model)
