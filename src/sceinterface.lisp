@@ -25,7 +25,7 @@
 (defcfun "SCE_Shader_GetResourceType" :int)
 ;; TODO: SCE_Shader_InitParam/DeleteParam
 (defsetter shader "Init")
-(defsetter shader "Delete")
+;(defsetter shader "Delete")
 ;; TODO: SCE_Shader_GetSceneResource
 (def-sce-method shader "GetLanguage" :int)
 (def-sce-method shader "GetType" :int)
@@ -37,10 +37,10 @@
 (def-sce-method shader "AddSource" :int
   (type :int)
   (src :string))
-(def-sce-method "GetIndex" :int
+(def-sce-method shader "GetIndex" :int
   (type :int)
   (name :string))
-(def-sce-method "GetAttribIndex" :int
+(def-sce-method shader "GetAttribIndex" :int
   (name :string))
 
 (defcfun "SCE_Shader_Param" :void
@@ -61,9 +61,9 @@
   (val :float))
 ;; TODO: SCE_Shader_SetParam*fv
 
-(defcfun "SCE_Shader_SetMatrix3" :void
+#|(defcfun "SCE_Shader_SetMatrix3" :void
   (index :int)
-  (m scematrix3))
+  (m scematrix3))|#
 (defcfun "SCE_Shader_SetMatrix4" :void
   (index :int)
   (m scematrix4))
@@ -241,12 +241,13 @@
 ;;; Model
 (defobject model)
 
-(def-sce-method model "AddEntityv" :int
+(def-sce-method model "AddNewEntityv" :int
+  (num :int)
   (level :int)
   (mesh scemesh)
   (shader sceshader)
   (textures :pointer))
-(def-sce-method model "AddEntity" :int
+(def-sce-method model "AddNewEntity" :int
   (level :int)
   (mesh scemesh)
   (shader sceshader)
@@ -405,7 +406,7 @@
         (matrix (if matrix matrix (gensym))))
     `(with-object (,model model)
        (with-mesh (,mesh ,path)
-         (sce-model-addentityv ,model 0 ,mesh (null-pointer) (null-pointer))
+         (sce-model-addnewentityv ,model 0 ,mesh (null-pointer) (null-pointer))
          (sce-model-addnewinstance ,model 0 1 (null-pointer))
          (sce-model-mergeinstances ,model)
          (sce-scene-addmodel *scene* ,model)

@@ -1,5 +1,5 @@
 (asdf:defsystem scelisp
-  :depends-on (:cffi :alexandria)
+  :depends-on (:cffi :alexandria :lispbuilder-sdl)
   :license "MIT"
   :description "SCEngine Common Lisp bindings"
   :components

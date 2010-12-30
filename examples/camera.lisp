@@ -1,4 +1,3 @@
-(require :lispbuilder-sdl)
 (require :scelisp)
 (in-package :scelisp)
 
@@ -21,7 +20,7 @@
           (sce-scene-addlight scene light)
           ;; TODO: use relative path
           (with-mesh (mesh "/home/quentin/sce/samples/data/spaceship.obj")
-            (sce-model-addnewentityv model 0 mesh (null-pointer) (null-pointer))
+            (sce-model-addnewentityv model 0 1 mesh (null-pointer) (null-pointer))
             (sce-model-addnewinstance model 0 1 (null-pointer))
             (sce-model-mergeinstances model)
             (sce-scene-addmodel scene model)
