@@ -264,7 +264,7 @@
 (defconstructor model)
 
 ;;; SceneEntity & co
-(defobject (sceneentity "SceneEntity"))
+(defobject sceneentity "SceneEntity")
 (defctype scesceneentityinstance :pointer)
 (defctype scesceneentityproperties :pointer)
 (defctype scesceneentitygroup :pointer)

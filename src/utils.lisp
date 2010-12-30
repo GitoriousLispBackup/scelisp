@@ -12,10 +12,8 @@
 (defun scetype (name)
   (symbolicate 'sce name))
 
-(defmacro defobject (name)
-  (when (listp name)
-    (setf (gethash (first name) *types*) (second name))
-    (setf name (first name)))           ; a bit ugly
+(defmacro defobject (name &optional (c-name name))
+  (setf (gethash name *types*) c-name)
   (let ((typename (scetype name))
         (string-name (scetype-string name)))
     `(progn
