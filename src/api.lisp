@@ -77,7 +77,7 @@
     (create obj)))
 
 (defmethod create :before ((obj sceobject))
-  (when (pointer obj)
+  (when (and (slot-boundp obj 'pointer) (pointer obj))
     (warn "Recreating an object that was already created")))
 
 ;;; scemovable
