@@ -94,9 +94,10 @@
                            x y z)))
 
 (defmethod initialize-instance :after ((obj scemovable) &key
-                                       (x .0) (y .0) (z .0)
+                                       x y z
                                        &allow-other-keys)
-  (translate obj x y z))
+  (when (and x y z)
+    (translate obj x y z)))
 
 ;;; SCELight
 (defclass light (sceobject)
@@ -238,6 +239,11 @@
                            (null-pointer) (null-pointer))
   (sce-model-addnewinstance (pointer m) 0 1 (null-pointer))
   (sce-model-mergeinstances (pointer m)))
+
+(defmethod initialize-instance :after ((m model) &key mesh
+                                       &allow-other-keys)
+  (when mesh
+    (add m mesh)))
 
 ;;; Scene
 (defclass scene (sceobject)
