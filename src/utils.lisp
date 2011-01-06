@@ -2,18 +2,20 @@
 
 (eval-when (:compile-toplevel :load-toplevel)
   (defvar *types* (make-hash-table :test 'eq))
-  (defvar *types-properties* (make-hash-table :test 'eq))
-  (defun scetype-string (name)
-    (let ((str (gethash name *types*)))
-      (if str
-          str
-          (format nil "~@(~a~)" name)))))
+  (defvar *types-properties* (make-hash-table :test 'eq)))
+
+(defun scetype-string (name)
+  (let ((str (gethash name *types*)))
+    (if str
+        str
+        (format nil "~@(~a~)" name))))
 
 (defun scetype (name)
   (symbolicate 'sce name))
 
-(defmacro defobject (name &optional (c-name name))
-  (setf (gethash name *types*) c-name)
+(defmacro defobject (name &optional (c-name nil))
+  (when c-name
+    (setf (gethash name *types*) c-name))
   (let ((typename (scetype name))
         (string-name (scetype-string name)))
     `(progn

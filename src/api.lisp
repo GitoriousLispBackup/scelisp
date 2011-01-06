@@ -117,12 +117,12 @@
 (defgeneric intensity (object)
   (:documentation "The intensity of the light)"))
 
-(defmethod (setf active) ((l light) status)
+(defmethod (setf active) (status (l light))
   (sce-light-activate (pointer l) status))
 (defmethod active ((l light))
   (sce-light-isactivated (pointer l)))
 
-(defmethod (setf infinite) ((l light) status)
+(defmethod (setf infinite) (status (l light))
   (sce-light-infinite (pointer l) status))
 (defmethod infinite ((l light))
   (sce-light-isinfinite (pointer l)))
@@ -130,7 +130,7 @@
 (defmethod get-node ((l light))
   (sce-light-getnode (pointer l)))
 
-(defmethod (setf color) ((l light) color)
+(defmethod (setf color) (color (l light))
   (sce-light-setcolor (pointer l) (first color) (second color) (third color)))
 ;; TODO: Does it return a list ?
 (defmethod color ((l light))
@@ -138,17 +138,17 @@
 
 ;; TODO: GetPositionv GetDirectionv
 
-(defmethod (setf angle) ((l light) angle)
+(defmethod (setf angle) (angle (l light))
   (sce-light-setangle (pointer l) angle))
 (defmethod angle ((l light))
   (sce-light-getangle (pointer l)))
 
-(defmethod (setf intensity) ((l light) intensity)
+(defmethod (setf intensity) (intensity (l light))
   (sce-light-setintensity (pointer l) intensity))
 (defmethod intensity ((l light))
   (sce-light-getintensity (pointer l)))
 
-(defmethod (setf radius) ((l light) radius)
+(defmethod (setf radius) (radius (l light))
   (sce-light-setradius (pointer l) radius))
 (defmethod radius ((l light))
   (sce-light-getradius (pointer l)))
@@ -206,7 +206,7 @@
 (defmethod initialize-instance :after ((c camera) &key
                                        (width 800) (height 600)
                                        &allow-other-keys)
-  (set-viewport (pointer c) 0 0 width height))
+  (set-viewport c 0 0 width height))
 
 ;;; SCEMesh
 (defclass mesh (sceobject)

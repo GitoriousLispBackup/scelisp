@@ -9,7 +9,7 @@
 (defmethod init ((game game))
   (let* ((camera (make-instance 'camera
                                :width 800 :height 600
-                               :x 10 :y 10 :z 10))
+                               :x 10.0 :y 10.0 :z 10.0))
          (light (make-instance 'light
                                :infinite t :color '(1.0 1.0 1.0)))
          (cube (make-instance 'model
