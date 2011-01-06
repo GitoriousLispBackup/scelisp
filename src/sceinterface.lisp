@@ -209,7 +209,9 @@
 (def-sce-method light "GetPositionv" scevector)
 (def-sce-method light "GetDirectionv" scevector)
 
-(defstatus light "Infinite")
+(defsetter light "Infinite"
+  (status scebool))
+(def-sce-method light "IsInfinite" scebool)
 (defprop light "Angle" :float)
 (defprop light "Intensity" :float)
 (defprop light "Radius" :float)
