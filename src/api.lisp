@@ -100,7 +100,7 @@
     (translate obj x y z)))
 
 ;;; SCELight
-(defclass light (sceobject)
+(defclass light (scemovable)
   ()
   (:documentation "A light"))
 
