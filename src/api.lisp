@@ -57,6 +57,8 @@
       (init sce)
       (sdl:with-events ()
         (:quit-event () t)
+        (:mouse-button-down-event ()
+          (handle-event sce :mouse-button-down-event))
         (:idle ()
           (update sce)
           (draw sce)
@@ -216,6 +218,8 @@
                                        &allow-other-keys)
   (unless file (error "Can't create a mesh without an obj file"))
   (setf (pointer m) (sce-mesh-load file force))
+  (when (null-pointer-p (pointer m))
+    (error "Can't load the file: ~a" file))
   (sce-mesh-autobuild (pointer m)))
 
 ;;; SCEModel
