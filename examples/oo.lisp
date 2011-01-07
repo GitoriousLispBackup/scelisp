@@ -26,11 +26,10 @@
   (update (game-scene game)))
 
 (defmethod draw ((game game))
-;  (translate (game-cube game) (pos-x game) 0.0 0.0)
   (draw (game-scene game)))
 
-(defmethod handle-event ((game game) (event (eql :mouse-button-down-event)))
-  (incf (pos-x game)))
+(defmethod handle-event ((game game) (event (eql :mouse-button-down-event)) &key)
+  (incf (pos-x game) 0.1))
 
 (defun main ()
   (launch (make-instance 'game :width 800 :height 600)))

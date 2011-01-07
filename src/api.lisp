@@ -50,19 +50,48 @@
 (defgeneric launch (object)
   (:documentation "Launch SCEngine"))
 
+(defgeneric handle-event (object event-type &key &allow-other-keys)
+  (:documentation "Handle events")
+  (:method (object event-type &key &allow-other-keys)
+    nil))
+
+(defmethod handle-event :around ((sce sce) (type (eql :idle)) &key)
+  (update sce)
+  (draw sce)
+  (sdl:update-display))
+
+(defmethod handle-event ((sce sce) (type (eql :quit-event)) &key)
+  t)
+
+;;; A bit ugly but it does the trick
+(defun expand-events (events)
+  (let (result)
+    (maphash
+     (lambda (k v)
+       (let (sub)
+         (maphash
+          (lambda (k2 v2)
+            (push k2 sub)
+            (push (intern (symbol-name v2)) sub))
+          v)
+         (setf sub (nreverse sub))
+         (push (list k                  ; event
+                     sub                ; args
+                     `(handle-event sce ,k ,@sub)) ; call
+               result)))
+     events)
+    result))
+
+(defmacro manage-events ()
+  `(sdl:with-events ()
+     ,@(expand-events sdl::*events*)))
+
 (defmethod launch ((sce sce))
   (sdl:with-init ()
     (sdl:window (width sce) (height sce) :opengl t)
     (with-interface
       (init sce)
-      (sdl:with-events ()
-        (:quit-event () t)
-        (:mouse-button-down-event ()
-          (handle-event sce :mouse-button-down-event))
-        (:idle ()
-          (update sce)
-          (draw sce)
-          (sdl:update-display))))))
+      (manage-events))))
 
 ;;; sceobject
 (defclass sceobject ()
