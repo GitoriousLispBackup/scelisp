@@ -2,16 +2,30 @@
 (require :scelisp)
 (in-package :scelisp)
 
-(defun run ()
-  (with-simple-scene (:width 800 :height 600
-                      :lightcolor (1.0 1.0 1.0)
-                      :lightpos (1.0 2.4 1.0))
-    (with-simple-model ("cube.obj"
-                        :matrix matrix)
-      (sce-matrix4-mulscale matrix 0.3 0.3 0.3)
-      (sce-matrix4-mulrotx matrix (coerce pi 'single-float))
-      (sdl:with-events ()
-        (:quit-event () t)
-        (:idle ()
-          (sce-matrix4-mulrotz matrix 0.02)
-          (update-and-render-simple-scene))))))
+(defparameter *width* 800)
+(defparameter *height* 600)
+
+(defclass app (sce)
+  ((scene :accessor scene)
+   (model :accessor model)))
+
+(defmethod init ((app app))
+  (let* ((camera (make-instance 'camera :width *width* :height *height*))
+         (light (make-instance 'light :x 1.0 :y 2.4 :z 1.0))
+         (model (make-instance 'model
+                               :mesh (make-instance 'mesh :file "cube.obj")))
+         (scene (make-instance 'scene :camera camera)))
+    (setf (scene app) scene
+          (model app) model)
+    (add scene model)
+    (add scene light)
+    (sce-matrix4-mulscale (get-matrix model) 0.3 0.3 0.3)))
+
+(defmethod update ((app app))
+  (update (scene app)))
+
+(defmethod draw ((app app))
+  (draw (scene app)))
+
+(defun main ()
+  (launch (make-instance 'app :width *width* :height *height*)))
