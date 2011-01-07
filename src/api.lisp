@@ -84,6 +84,8 @@
 
 (defmacro manage-events ()
   `(sdl:with-events ()
+     (:quit-event () (handle-event sce :quit-event))
+     (:idle () (handle-event sce :idle))
      ,@(expand-events sdl::*events*)))
 
 (defmethod launch ((sce sce))
