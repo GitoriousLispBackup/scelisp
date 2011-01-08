@@ -1,44 +1,31 @@
 (require :scelisp)
-
 (in-package :scelisp)
 
-(defun run ()
-  (sdl:with-init ()
-    (sdl:window 800 600 :opengl t)
-    (setf (sdl:frame-rate) 15)
-    (with-interface
-      (with-objects ((scene scene)
-                     (camera camera)
-                     (light light :color '(1.0 1.0 1.0))
-                     (model model))
-        (sce-camera-setviewport camera 0 0 800 600)
-        (sce-light-infinite light t)
-        (sce-matrix4-translate (sce-node-getmatrix
-                                (sce-light-getnode light) :node-read-matrix)
-                               1.0 2.4 1.0)
-        (sce-scene-addcamera scene camera)
-        (sce-scene-addlight scene light)
-        (with-mesh (mesh "cube.obj")
-          (let ((tex (sce-texture-loadv 0 0 0 0 0
-                                        '("lisp.png"))))
-            (sce-texture-build tex t)
-            (with-list (texs scetexture (list tex))
-              (sce-model-addnewentityv model 0 0 mesh (null-pointer) texs))
-            (sce-model-addnewinstance model 0 1 (null-pointer))
-            (sce-model-mergeinstances model)
-            (sce-scene-addmodel scene model)
-            (let ((matrix (sce-node-getmatrix
-                           (sce-model-getrootnode model)
-                           :node-read-matrix)))
-              (sce-matrix4-mulscale matrix 0.3 0.3 0.3)
-              (sce-matrix4-mulrotx matrix (coerce pi 'single-float))
-              (sdl:with-events ()
-                (:quit-event () t)
-                (:idle ()
-                       (when (sce-error-haveerror)
-                         (sce-error-out))
-                       (sce-matrix4-mulrotz matrix 0.02)
-                       (sce-matrix4-mulroty matrix 0.02)
-                       (sce-scene-update scene camera (null-pointer) 0)
-                       (sce-scene-render scene camera (null-pointer) 0)
-                       (sdl:update-display))))))))))
+(load "camera.lisp")
+
+(defclass tex-app (app)
+  ((tex :accessor app)))
+
+(defmethod init ((app app))
+  (let* ((camera (make-instance 'camera :width *width* :height *height*))
+         (red-light (make-instance 'light :color '(0.8 0.2 0.2)
+                                   :x 1.0 :y 2.4 :z 1.0))
+         (green-light (make-instance 'light :color '(0.2 0.8 0.2)
+                                     :x 1.0 :y -2.4 :z 1.0))
+         (model (make-instance 'model
+                               :mesh (make-instance 'mesh :file "cube.obj")
+                               :texture (make-instance 'texture :file "lisp.png")))
+         (scene (make-instance 'scene :camera camera))
+         (rx (make-instance 'inert :coeff 0.1 :accum 1))
+         (ry (make-instance 'inert :coeff 0.1 :accum 1)))
+    (setf (scene app) scene
+          (model app) model
+          (rx app) rx
+          (ry app) ry)
+    (add scene red-light)
+    (add scene green-light)
+    (add scene model)
+    (sce-matrix4-mulscale (get-matrix model) 0.3 0.3 0.3)))
+
+(defun main ()
+  (launch (make-instance 'tex-app)))

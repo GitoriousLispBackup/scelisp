@@ -19,7 +19,7 @@
   (:method (object)
     (mapcar #'update (objects object))))
 
-(defgeneric add (object something)
+(defgeneric add (object something &key &allow-other-keys)
   (:documentation "Add something to an object"))
 
 (defgeneric objects (object)
@@ -103,11 +103,10 @@
    (objects :accessor objects :initform nil :initarg :objects))
   (:documentation "A generic SCE object"))
 
-(defmethod add :after (object something)
+(defmethod add :after (object something &key)
   (push something (objects object)))
 
-(defmethod initialize-instance :before ((obj sceobject) &key pointer
-                                        &allow-other-keys)
+(defmethod initialize-instance :before ((obj sceobject) &key pointer)
   (unless pointer
     (create obj)))
 
@@ -126,9 +125,7 @@
     (sce-matrix4-translate (get-matrix object :node-read-matrix)
                            x y z)))
 
-(defmethod initialize-instance :after ((obj scemovable) &key
-                                       x y z
-                                       &allow-other-keys)
+(defmethod initialize-instance :after ((obj scemovable) &key x y z)
   (when (and x y z)
     (translate obj x y z)))
 
@@ -144,8 +141,7 @@
                (pointerp (pointer object)))
       (foreign-free (pointer object)))))
 
-(defmethod initialize-instance :before ((obj scefreeable) &key
-                                        &allow-other-keys)
+(defmethod initialize-instance :before ((obj scefreeable) &key)
   (push obj (to-free obj)))
 
 (defmethod free :after ((obj scefreeable))
@@ -258,17 +254,14 @@
 (defmethod get-node ((c camera))
   (sce-camera-getnode (pointer c)))
 
-(defmethod initialize-instance :after ((c camera) &key
-                                       (width 800) (height 600)
-                                       &allow-other-keys)
+(defmethod initialize-instance :after ((c camera) &key (width 800) (height 600))
   (set-viewport c 0 0 width height))
 
 ;;; SCEMesh
 (defclass mesh (sceobject)
   ())
 
-(defmethod initialize-instance :after ((m mesh) &key file (force 2)
-                                       &allow-other-keys)
+(defmethod initialize-instance :after ((m mesh) &key file (force 2))
   (unless file (error "Can't create a mesh without an obj file"))
   (setf (pointer m) (sce-mesh-load file force))
   (when (null-pointer-p (pointer m))
@@ -285,17 +278,22 @@
 (defmethod get-node ((m model))
   (sce-model-getrootnode (pointer m)))
 
-(defmethod add ((m model) (mesh mesh))
+(defmethod add ((m model) (mesh mesh) &key texture)
   ;; TODO: should more parameters be availables ?
-  (sce-model-addnewentityv (pointer m) 0 1 (pointer mesh)
-                           (null-pointer) (null-pointer))
+  (let ((texs (if texture
+                  (foreign-alloc 'scetexture
+                                 :initial-contents (list (pointer texture)
+                                                         (null-pointer)))
+                  (null-pointer))))
+    (sce-model-addnewentityv (pointer m) 0 1 (pointer mesh)
+                             (null-pointer) texs)
+    (foreign-free texs))
   (sce-model-addnewinstance (pointer m) 0 1 (null-pointer))
   (sce-model-mergeinstances (pointer m)))
 
-(defmethod initialize-instance :after ((m model) &key mesh
-                                       &allow-other-keys)
+(defmethod initialize-instance :after ((m model) &key mesh texture)
   (when mesh
-    (add m mesh)))
+    (add m mesh :texture texture)))
 
 ;;; Scene
 (defclass scene (sceobject)
@@ -305,11 +303,11 @@
 (defmethod create ((s scene))
   (setf (pointer s) (sce-scene-create)))
 
-(defmethod add ((s scene) (c camera))
+(defmethod add ((s scene) (c camera) &key)
   (sce-scene-addcamera (pointer s) (pointer c)))
-(defmethod add ((s scene) (l light))
+(defmethod add ((s scene) (l light) &key)
   (sce-scene-addlight (pointer s) (pointer l)))
-(defmethod add ((s scene) (m model))
+(defmethod add ((s scene) (m model) &key)
   (sce-scene-addmodel (pointer s) (pointer m)))
 
 (defmethod update ((s scene))
@@ -321,8 +319,7 @@
     (error "Can't draw a scene without a camera"))
   (sce-scene-render (pointer s) (pointer (camera s)) (null-pointer) 0))
 
-(defmethod initialize-instance :after ((s scene) &key objects
-                                       &allow-other-keys)
+(defmethod initialize-instance :after ((s scene) &key objects)
   (mapcar (curry #'add s) objects))
 
 ;;; Inerts
@@ -356,3 +353,13 @@
   (sce-inert-get (pointer i)))
 (defmethod (setf value) (val (i inert))
   (sce-inert-set (pointer i) val))
+
+;;; SCETexture
+(defclass texture (sceobject)
+  ()
+  (:documentation "A texture"))
+
+(defmethod initialize-instance ((tex texture) &key file)
+  (when file
+    (setf (pointer tex) (sce-texture-loadv 0 0 0 0 0 (list file)))
+    (sce-texture-build (pointer tex) t)))
