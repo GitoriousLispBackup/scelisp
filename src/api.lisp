@@ -140,7 +140,9 @@
 (defgeneric free (object)
   (:documentation "Free an object")
   (:method (object)
-    nil))
+    (when (and (slot-boundp object 'pointer)
+               (pointerp (pointer object)))
+      (foreign-free (pointer object)))))
 
 (defmethod initialize-instance :before ((obj scefreeable) &key
                                         &allow-other-keys)
@@ -331,8 +333,6 @@
 (defmethod create ((i inert))
   (setf (pointer i) (foreign-alloc 'sceinertvar))
   (sce-inert-init (pointer i)))
-(defmethod free ((i inert))
-  (foreign-free (pointer i)))
 
 (defmethod initialize-instance ((i inert) &key coeff accum)
   (when coeff
