@@ -1,10 +1,14 @@
 (in-package :scelisp)
-;;;; TODO: create the pointer for each class
+
 (defgeneric init (object)
   (:documentation "Initialize an object"))
 
 (defgeneric create (object)
   (:documentation "Set the pointer slot for an object")
+  (:method (object)
+    nil))
+(defgeneric free (object)
+  (:documentation "Method called when the window get closed")
   (:method (object)
     nil))
 
@@ -43,8 +47,9 @@
 
 ;;; SCE class
 (defclass sce ()
-  ((width :type integer :accessor width :initarg :width)
-   (height :type integer :accessor height :initarg :height))
+  ((width :type integer :accessor width :initarg :width :initform 800)
+   (height :type integer :accessor height :initarg :height :initform 600)
+   (framerate :type integer :accessor framerate :initarg :framerate :initform 60))
   (:documentation "The main class that should be inherited"))
 
 (defgeneric launch (object)
@@ -64,33 +69,33 @@
   t)
 
 ;;; A bit ugly but it does the trick
-(defun expand-events (events)
-  (let (result)
-    (maphash
-     (lambda (k v)
-       (let (sub)
-         (maphash
-          (lambda (k2 v2)
-            (push k2 sub)
-            (push (intern (symbol-name v2)) sub))
-          v)
-         (setf sub (nreverse sub))
-         (push (list k                  ; event
-                     sub                ; args
-                     `(handle-event sce ,k ,@sub)) ; call
-               result)))
-     events)
-    result))
-
 (defmacro manage-events ()
-  `(sdl:with-events ()
-     (:quit-event () (handle-event sce :quit-event))
-     (:idle () (handle-event sce :idle))
-     ,@(expand-events sdl::*events*)))
+  (flet ((expand-events (events)
+           (let (result)
+             (maphash
+              (lambda (k v)
+                (let (sub)
+                  (maphash
+                   (lambda (k2 v2)
+                     (push k2 sub)
+                     (push (intern (symbol-name v2)) sub))
+                   v)
+                  (setf sub (nreverse sub))
+                  (push (list k                           ; event
+                              sub                         ; args
+                              `(handle-event sce ,k ,@sub)) ; call
+                        result)))
+              events)
+             result)))
+    `(sdl:with-events ()
+       (:quit-event () (handle-event sce :quit-event))
+       (:idle () (handle-event sce :idle))
+       ,@(expand-events sdl::*events*))))
 
 (defmethod launch ((sce sce))
   (sdl:with-init ()
     (sdl:window (width sce) (height sce) :opengl t)
+    (setf (sdl:frame-rate) (framerate sce))
     (with-interface
       (init sce)
       (manage-events))))
@@ -303,3 +308,37 @@
 (defmethod initialize-instance :after ((s scene) &key objects
                                        &allow-other-keys)
   (mapcar (curry #'add s) objects))
+
+;;; Inerts
+;; TODO: don't manipulate the pointer like that
+(defclass inert (sceobject)
+  ())
+
+(defmethod create ((i inert))
+  (setf (pointer i) (foreign-alloc 'sceinertvar))
+  (sce-inert-init (pointer i)))
+(defmethod free ((i inert))
+  (foreign-free (pointer i)))
+
+(defmethod initialize-instance ((i inert) &key coeff accum)
+  (when coeff
+    (sce-inert-setcoefficient (pointer i) coeff))
+  (when accum
+    (sce-inert-accum (pointer i) accum)))
+
+(defgeneric operate (var op value)
+  (:documentation "Makes an operation on a variable"))
+(defgeneric compute (var)
+  (:documentation "Makes computations on a variable"))
+(defgeneric value (var)
+  (:documentation "Return the value of a variable"))
+
+(defmethod operate ((i inert) op value)
+  (sce-inert-operator (pointer i) op value))
+(defmethod compute ((i inert))
+  (sce-inert-compute (pointer i)))
+
+(defmethod value ((i inert))
+  (sce-inert-get (pointer i)))
+(defmethod (setf value) (val (i inert))
+  (sce-inert-set (pointer i) val))
