@@ -146,6 +146,9 @@
                                         &allow-other-keys)
   (push obj (to-free obj)))
 
+(defmethod free :after ((obj scefreeable))
+  (setf (to-free obj) (remove obj (to-free obj))))
+
 ;;; SCELight
 (defclass light (scemovable)
   ()
