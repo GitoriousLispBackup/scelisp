@@ -6,7 +6,7 @@
 (defclass tex-app (app)
   ((tex :accessor app)))
 
-(defmethod init ((app app))
+(defmethod init ((app tex-app))
   (let* ((camera (make-instance 'camera :width *width* :height *height*))
          (red-light (make-instance 'light :color '(0.8 0.2 0.2)
                                    :x 1.0 :y 2.4 :z 1.0))
@@ -16,8 +16,8 @@
                                :mesh (make-instance 'mesh :file "cube.obj")
                                :texture (make-instance 'texture :file "lisp.png")))
          (scene (make-instance 'scene :camera camera))
-         (rx (make-instance 'inert :coeff 0.1 :accum 1))
-         (ry (make-instance 'inert :coeff 0.1 :accum 1)))
+         (rx (make-instance 'inert :coeff 0.1 :accum t))
+         (ry (make-instance 'inert :coeff 0.1 :accum t)))
     (setf (scene app) scene
           (model app) model
           (rx app) rx

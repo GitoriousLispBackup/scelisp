@@ -15,14 +15,14 @@
 (defcstruct sceinertvar
   "Variable with inertia"
   (var :float)
-  (accum :int)
+  (accum scebool)
   (coeff :float)
   (toadd :float)
   (real :float))
 
 (def-sce-method inert "Init" :void)
 (def-sce-method inert "Accum" :void
-  (accum :int))
+  (accum scebool))
 (defsetter inert "SetCoefficient"
   (coeff :float))
 (def-sce-method inert "Set" :void

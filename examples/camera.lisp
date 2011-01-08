@@ -19,8 +19,8 @@
          (model (make-instance 'model
                                :mesh (make-instance 'mesh :file "cube.obj")))
          (scene (make-instance 'scene :camera camera))
-         (rx (make-instance 'inert :coeff 0.1 :accum 1))
-         (ry (make-instance 'inert :coeff 0.1 :accum 1)))
+         (rx (make-instance 'inert :coeff 0.1 :accum t))
+         (ry (make-instance 'inert :coeff 0.1 :accum t)))
     (setf (scene app) scene
           (model app) model
           (rx app) rx
