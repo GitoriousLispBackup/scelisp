@@ -7,10 +7,6 @@
   (:documentation "Set the pointer slot for an object")
   (:method (object)
     nil))
-(defgeneric free (object)
-  (:documentation "Method called when the window get closed")
-  (:method (object)
-    nil))
 
 (defgeneric draw (object)
   (:documentation "Draw an object on the screen"))
@@ -98,7 +94,8 @@
     (setf (sdl:frame-rate) (framerate sce))
     (with-interface
       (init sce)
-      (manage-events))))
+      (manage-events)
+      (mapcar #'free (to-free (make-instance 'scefreeable))))))
 
 ;;; sceobject
 (defclass sceobject ()
@@ -134,6 +131,20 @@
                                        &allow-other-keys)
   (when (and x y z)
     (translate obj x y z)))
+
+;;; scefreeable
+(defclass scefreeable (sceobject)
+  ((to-free :accessor to-free :initform nil :allocation :class))
+  (:documentation "A SCE object that should be freed"))
+
+(defgeneric free (object)
+  (:documentation "Free an object")
+  (:method (object)
+    nil))
+
+(defmethod initialize-instance :before ((obj scefreeable) &key
+                                        &allow-other-keys)
+  (push obj (to-free obj)))
 
 ;;; SCELight
 (defclass light (scemovable)
@@ -311,7 +322,7 @@
 
 ;;; Inerts
 ;; TODO: don't manipulate the pointer like that
-(defclass inert (sceobject)
+(defclass inert (scefreeable)
   ())
 
 (defmethod create ((i inert))

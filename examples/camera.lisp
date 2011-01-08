@@ -44,11 +44,6 @@
 (defmethod draw ((app app))
   (draw (scene app)))
 
-(defmethod handle-event ((app app) (event (eql :quit-event))
-                         &key)
-  (free (rx app))
-  (free (ry app))
-  t)
 (defmethod handle-event ((app app) (event (eql :mouse-motion-event))
                          &key state x-rel y-rel)
   (when (= state 1)
