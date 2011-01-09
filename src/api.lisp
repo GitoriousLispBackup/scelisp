@@ -359,7 +359,7 @@
   ()
   (:documentation "A texture"))
 
-(defmethod initialize-instance ((tex texture) &key file)
+(defmethod initialize-instance :after ((tex texture) &key file)
   (when file
     (setf (pointer tex) (sce-texture-loadv 0 0 0 0 0 (list file)))
     (sce-texture-build (pointer tex) t)))
