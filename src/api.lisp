@@ -43,10 +43,11 @@
 
 ;;; SCE class
 (defclass sce ()
-  ((width :type integer :accessor width :initarg :width :initform 800)
-   (height :type integer :accessor height :initarg :height :initform 600)
+  ((width :type integer :accessor width :initarg :width)
+   (height :type integer :accessor height :initarg :height)
    (framerate :type integer :accessor framerate :initarg :framerate :initform 60))
-  (:documentation "The main class that should be inherited"))
+  (:documentation "The main class that should be inherited")
+  (:default-initargs :width 800 :height 600))
 
 (defgeneric launch (object)
   (:documentation "Launch SCEngine"))
@@ -249,13 +250,22 @@
 (defmethod set-viewport ((c camera) x y w h)
   (sce-camera-setviewport (pointer c) x y w h))
 
-;; TODO: GetView etc.
+;; TODO: Get* etc.
+(defmethod get-view ((c camera))
+  (sce-camera-getview (pointer c)))
+(defmethod get-matrix ((c camera) &optional type)
+  (declare (ignore type))
+  (get-view c))
 
 (defmethod get-node ((c camera))
   (sce-camera-getnode (pointer c)))
 
 (defmethod initialize-instance :after ((c camera) &key (width 800) (height 600))
-  (set-viewport c 0 0 width height))
+  (set-viewport c 0 0 width height)
+  (sce-matrix4-projection (sce-camera-getproj (pointer c))
+                          1.22
+                          (float (/ width height))
+                          0.1 1000.0))
 
 ;;; SCEMesh
 (defclass mesh (sceobject)
