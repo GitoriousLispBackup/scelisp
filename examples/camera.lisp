@@ -4,7 +4,8 @@
 (defclass app (simple-app)
   ((model :accessor model)
    (rx :accessor rx)
-   (ry :accessor ry)))
+   (ry :accessor ry)
+   (distance :accessor distance :initform -1.0)))
 
 (defmethod init ((app app))
   (let* ((model (make-instance 'model
@@ -14,10 +15,10 @@
     (setf (model app) model
           (rx app) rx
           (ry app) ry)
-    (add (scene app) model)
-    (translate (camera (scene app)) 0.0 0.0 -1.0)))
+    (add (scene app) model)))
 
 (defmethod update ((app app))
+  (set-position (camera (scene app)) 0.0 0.0 (distance app))
   (with-accessors ((scene scene) (model model)
                    (rx rx) (ry ry))
       app
@@ -34,6 +35,12 @@
   (when (= state 1)
     (operate (ry app) #'- x-rel)
     (operate (rx app) #'+ y-rel)))
+
+(defmethod handle-event ((app app) (event (eql :mouse-button-down-event))
+                         &key button)
+  (case button
+    (4 (incf (distance app) 0.1))
+    (5 (decf (distance app) 0.1))))
 
 (defun main ()
   (launch (make-instance 'app)))
