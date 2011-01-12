@@ -32,8 +32,6 @@
   (forward p :step (- step)))
 
 (defmethod step-left ((p player) &key (step (player-step p)))
-  (format t "~a ~a,~a ~a,~a~%" (angle p) (pos-x p) (pos-z p) (sin (angle p)) (cos (angle p)))
-
   (incf (pos-z p) (* step (- (sin (angle p)))))
   (incf (pos-x p) (* step (cos (angle p)))))
 (defmethod step-right ((p player) &key (step (player-step p)))
@@ -54,18 +52,18 @@
     ;; Setup the scene
     (add (scene app) model)
     (setf (model app) model)
-    (translate model 0.0 0.0 -5.0)
-    (sce-matrix4-mulscale (get-matrix model) 0.3 0.3 0.3)
-    (sce-matrix4-mulrotate (get-matrix model) 1.5 1.0 0.1 0.6)
+    ;; Move a bit the model
+    (set-position model 0.0 0.0 -5.0)
+    (scale model 0.3 0.3 0.3)
+    (rot model 1.5 1.0 0.1 0.6)
     ;; Initialize the player
     (setf (player app) (make-instance 'player))))
 
 (defmethod update ((app fps-camera))
-  (translate (camera (scene app)) 0.0 0.0 0.0)
-  (let ((m (get-matrix (camera (scene app)))))
-    (sce-matrix4-mulroty m
-                         (coerce (angle (player app)) 'single-float))
-    (sce-matrix4-multranslate m
+  (let ((camera (camera (scene app))))
+    (set-position camera 0.0 0.0 0.0)
+    (rot-y camera (coerce (angle (player app)) 'single-float))
+    (translate camera
                (coerce (pos-x (player app)) 'single-float)
                (coerce (pos-y (player app)) 'single-float)
                (coerce (pos-z (player app)) 'single-float))))
@@ -85,3 +83,4 @@
 
 (defun main ()
   (launch (make-instance 'fps-camera)))
+
