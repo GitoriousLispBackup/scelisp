@@ -9,6 +9,18 @@
 (defctype sceenum :unsigned-int)
 (defctype scebitfield :unsigned-int)
 
+;;; Bools
+(define-foreign-type scebool-type ()
+  ()
+  (:actual-type :int)
+  (:simple-parser scebool))
+
+(defmethod expand-to-foreign (value (type scebool-type))
+  `(if ,value 1 0))
+
+(defmethod expand-from-foreign (value (type scebool-type))
+  `(not (zerop ,value)))
+
 ;;; Inert
 (defctype sceinert :pointer)            ; for def-sce-method, which takes a pointer
 
@@ -43,18 +55,6 @@
      ,(when var
             `(sce-inert-accum ,var ,accum))
      ,@body))
-
-;;; Bools
-(define-foreign-type scebool-type ()
-  ()
-  (:actual-type :int)
-  (:simple-parser scebool))
-
-(defmethod expand-to-foreign (value (type scebool-type))
-  `(if ,value 1 0))
-
-(defmethod expand-from-foreign (value (type scebool-type))
-  `(not (zerop ,value)))
 
 ;;; Matrices
 (defctype scematrix4 (:pointer :float))

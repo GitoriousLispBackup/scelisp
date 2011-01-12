@@ -16,5 +16,8 @@
 (defmethod draw :after ((app simple-app))
   (draw (scene app)))
 
+(defmethod draw ((app simple-app))
+  nil)
+
 (defmethod update :after ((app simple-app))
   (update (scene app)))

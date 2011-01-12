@@ -9,25 +9,38 @@
   ((x :accessor pos-x :initarg :x)
    (y :accessor pos-y :initarg :y)
    (z :accessor pos-z :initarg :z)
+   (angle :accessor angle :initarg :angle)
    (step :accessor player-step :initform 0.1)
    (bobbing :accessor bobbing :initform 0)
    (bobbing-mod :accessor bobbing-mod :initarg :mod)
    (bobbing-func :accessor bobbing-func :initarg :func)
    (bobbing-inc :accessor bobbing-inc :initarg :inc))
-  (:default-initargs :x 0 :y 0 :z 0 :mod (* 2 pi) :inc 0.1
+  (:default-initargs :x 0 :y 0 :z 0 :angle 0 :mod (* 2 pi) :inc 0.1
                      :func (lambda (x) (/ (sin x) 3))))
 
 (defmethod forward ((p player) &key (step (player-step p)))
-  (setf (bobbing p) (mod (+ (bobbing p) (* (signum step) (bobbing-inc p)))
-                         (bobbing-mod p)))
-  (setf (pos-y p) (funcall (bobbing-func p) (bobbing p)))
-  (incf (pos-z p) step))
+  (with-accessors ((bobbing bobbing) (inc bobbing-inc)
+                   (mod bobbing-mod) (func bobbing-func)
+                   (x pos-x) (y pos-y) (z pos-z) (a angle))
+      p
+    (setf bobbing (mod (+ bobbing (* (signum step) inc))
+                         mod))
+    (setf y (funcall func bobbing))
+    (incf z (* step (cos a)))
+    (incf x (* step (sin a)))))
 (defmethod backward ((p player) &key (step (player-step p)))
   (forward p :step (- step)))
-(defmethod step-right ((p player) &key (step (player-step p)))
-  (decf (pos-x p) step))
+
 (defmethod step-left ((p player) &key (step (player-step p)))
-  (step-right p :step (- step)))
+  (format t "~a ~a,~a ~a,~a~%" (angle p) (pos-x p) (pos-z p) (sin (angle p)) (cos (angle p)))
+
+  (incf (pos-z p) (* step (- (sin (angle p)))))
+  (incf (pos-x p) (* step (cos (angle p)))))
+(defmethod step-right ((p player) &key (step (player-step p)))
+  (step-left p :step (- step)))
+
+(defmethod turn ((p player) angle)
+  (decf (angle p) angle))
 
 ;;; The app
 (defclass fps-camera (simple-app)
@@ -48,10 +61,14 @@
     (setf (player app) (make-instance 'player))))
 
 (defmethod update ((app fps-camera))
-  (translate (camera (scene app))
-             (coerce (pos-x (player app)) 'single-float)
-             (coerce (pos-y (player app)) 'single-float)
-             (coerce (pos-z (player app)) 'single-float)))
+  (translate (camera (scene app)) 0.0 0.0 0.0)
+  (let ((m (get-matrix (camera (scene app)))))
+    (sce-matrix4-mulroty m
+                         (coerce (angle (player app)) 'single-float))
+    (sce-matrix4-multranslate m
+               (coerce (pos-x (player app)) 'single-float)
+               (coerce (pos-y (player app)) 'single-float)
+               (coerce (pos-z (player app)) 'single-float))))
 
 (defmethod handle-event ((app fps-camera) (type (eql :key-down-event))
                          &key key)
@@ -61,6 +78,10 @@
       (:sdl-key-down (backward player))
       (:sdl-key-left (step-left player))
       (:sdl-key-right (step-right player)))))
+
+(defmethod handle-event ((app fps-camera) (type (eql :mouse-motion-event))
+                         &key x-rel)
+  (turn (player app) (/ x-rel 100)))
 
 (defun main ()
   (launch (make-instance 'fps-camera)))
