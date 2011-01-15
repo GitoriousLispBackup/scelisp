@@ -321,7 +321,7 @@
 (defmethod get-node ((m model))
   (sce-model-getrootnode (pointer m)))
 
-(defmethod add ((m model) (mesh mesh) &key texture)
+(defmethod add ((m model) (mesh mesh) &key texture shader)
   ;; TODO: should more parameters be availables ?
   (let ((texs (if texture
                   (foreign-alloc 'scetexture
@@ -329,14 +329,15 @@
                                                          (null-pointer)))
                   (null-pointer))))
     (sce-model-addnewentityv (pointer m) 0 1 (pointer mesh)
-                             (null-pointer) texs)
+                             (pointer shader) texs)
     (foreign-free texs))
   (sce-model-addnewinstance (pointer m) 0 1 (null-pointer))
   (sce-model-mergeinstances (pointer m)))
 
-(defmethod initialize-instance :after ((m model) &key mesh texture)
+(defmethod initialize-instance :after ((m model)
+                                       &key mesh texture (shader (null-pointer)))
   (when mesh
-    (add m mesh :texture texture)))
+    (add m mesh :texture texture :shader shader)))
 
 ;;; Scene
 (defclass scene (sceobject)
@@ -407,4 +408,31 @@
     (setf (pointer tex) (sce-texture-loadv 0 0 0 0 0 (list file)))
     (sce-texture-build (pointer tex) t)))
 
-;;; Matrices
+;;; SCEShader
+(defclass shader (sceobject)
+  ()
+  (:documentation "A shader"))
+
+(defgeneric use (shader)
+  (:documentation "Use the shader SHADER")
+  (:method (shader)
+    ;; Don't use any shader
+    (sce-shader-use (null-pointer))))
+
+(defmethod use ((s shader))
+  (sce-shader-use (pointer s)))
+
+(defun shader-param (name value)
+  (sce-shader-param name value))
+
+(defmacro with-shader (shader &body body)
+  `(progn
+     (use ,shader)
+     ,@body
+     (use (null-pointer))))
+
+(defmethod initialize-instance :after ((s shader) &key
+                                       (vertex (null-pointer))
+                                       (pixel (null-pointer)))
+  (setf (pointer s) (sce-shader-load vertex pixel nil))
+  (sce-shader-build (pointer s)))

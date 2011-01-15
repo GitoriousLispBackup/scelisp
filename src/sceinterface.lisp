@@ -33,7 +33,14 @@
 ;; TODO: SCE_Shader_SearchTypes
 ;; TODO: SCE_Shader_SetPosFile
 ;; TODO: SCE_Shader_Load*
+
+(defcfun "SCE_Shader_Load" sceshader
+  (vname :string)
+  (pname :string)
+  (force scebool))
 (def-sce-method shader "Build" :int)
+(defsetter shader "Use")
+
 (def-sce-method shader "AddSource" :int
   (type :int)
   (src :string))
@@ -44,12 +51,10 @@
   (name :string))
 
 (defcfun "SCE_Shader_Param" :void
-  (type :int)
   (name :string)
   (val :int))
 
 (defcfun "SCE_Shader_Paramf" :void
-  (type :int)
   (name :string)
   (val :float))
 ;; TODO: SCE_Shader_Param*fv
