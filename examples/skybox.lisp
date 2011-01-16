@@ -1,4 +1,3 @@
-;;;; SCEngine's model1 example in Lisp
 (require :scelisp)
 (in-package :scelisp)
 
@@ -6,6 +5,7 @@
 
 (defclass shader-app (app) ())
 
+;;; TODO: the skybox is just white, whatever the texture is
 (defmethod init ((app shader-app))
   (let* ((sky-tex (make-instance 'texture
                                  :type :tex-cube

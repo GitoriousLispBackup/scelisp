@@ -112,6 +112,10 @@
   (use-mipmap scebool))
 (def-sce-method texture "Update" :int)
 
+(defcfun "SCE_Texture_ForcePixelFormat" :void
+  (force scebool)
+  (pxf :int))
+
 (defcfun "SCE_Texture_Loadv" scetexture
   (type scetextype)
   (w :int)

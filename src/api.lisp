@@ -343,35 +343,6 @@
   (when mesh
     (add m mesh :texture texture :shader shader)))
 
-;;; Scene
-(defclass scene (sceobject)
-  ((camera :type camera :accessor camera :initarg :camera))
-  (:documentation "A scene"))
-
-(defmethod create ((s scene))
-  (setf (pointer s) (sce-scene-create)))
-
-(defmethod add ((s scene) (c camera) &key)
-  (sce-scene-addcamera (pointer s) (pointer c)))
-(defmethod add ((s scene) (l light) &key)
-  (sce-scene-addlight (pointer s) (pointer l)))
-(defmethod add ((s scene) (m model) &key)
-  (sce-scene-addmodel (pointer s) (pointer m)))
-(defmethod add ((s scene) (sky skybox) &key)
-  (sce-scene-setskybox (pointer s) (pointer sky)))
-
-(defmethod update ((s scene))
-  (unless (camera s)
-    (error "Can't update a scene without a camera"))
-  (sce-scene-update (pointer s) (pointer (camera s)) (null-pointer) 0))
-(defmethod draw ((s scene))
-  (unless (camera s)
-    (error "Can't draw a scene without a camera"))
-  (sce-scene-render (pointer s) (pointer (camera s)) (null-pointer) 0))
-
-(defmethod initialize-instance :after ((s scene) &key objects)
-  (mapcar (curry #'add s) objects))
-
 ;;; Inerts
 ;; TODO: don't manipulate the pointer like that
 (defclass inert (scefreeable)
@@ -461,3 +432,32 @@
                                        &key texture shader)
   (when texture (add s texture))
   (when shader (add s shader)))
+
+;;; SCEScene
+(defclass scene (sceobject)
+  ((camera :type camera :accessor camera :initarg :camera))
+  (:documentation "A scene"))
+
+(defmethod create ((s scene))
+  (setf (pointer s) (sce-scene-create)))
+
+(defmethod add ((s scene) (c camera) &key)
+  (sce-scene-addcamera (pointer s) (pointer c)))
+(defmethod add ((s scene) (l light) &key)
+  (sce-scene-addlight (pointer s) (pointer l)))
+(defmethod add ((s scene) (m model) &key)
+  (sce-scene-addmodel (pointer s) (pointer m)))
+(defmethod add ((s scene) (sky skybox) &key)
+  (sce-scene-setskybox (pointer s) (pointer sky)))
+
+(defmethod update ((s scene))
+  (unless (camera s)
+    (error "Can't update a scene without a camera"))
+  (sce-scene-update (pointer s) (pointer (camera s)) (null-pointer) 0))
+(defmethod draw ((s scene))
+  (unless (camera s)
+    (error "Can't draw a scene without a camera"))
+  (sce-scene-render (pointer s) (pointer (camera s)) (null-pointer) 0))
+
+(defmethod initialize-instance :after ((s scene) &key objects)
+  (mapcar (curry #'add s) objects))
