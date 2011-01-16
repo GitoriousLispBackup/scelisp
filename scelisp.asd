@@ -12,5 +12,6 @@
              (:file "sceutils")
              (:file "scecore")
              (:file "sceinterface")
+             (:file "scerenderer")
              (:file "api")
              (:file "simple-app")))))
