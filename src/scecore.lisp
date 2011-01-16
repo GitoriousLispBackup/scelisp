@@ -54,3 +54,10 @@
 
 ;;; Geometry
 (defcfun "SCE_Init_Geometry" :int)
+
+;;; BoxGeometry
+(defcenum sceeboxgeomtexcoordmode
+  :box-none-texcoord
+  :box-interior-texcoord
+  :box-exterior-texcoord
+  :box-cubemap-texcoord)
