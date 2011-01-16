@@ -357,6 +357,8 @@
   (sce-scene-addlight (pointer s) (pointer l)))
 (defmethod add ((s scene) (m model) &key)
   (sce-scene-addmodel (pointer s) (pointer m)))
+(defmethod add ((s scene) (sky skybox) &key)
+  (sce-scene-setskybox (pointer s) (pointer sky)))
 
 (defmethod update ((s scene))
   (unless (camera s)
@@ -457,5 +459,5 @@
 
 (defmethod initialize-instance :after ((s skybox)
                                        &key texture shader)
-  (add s texture)
-  (add s shader))
+  (when texture (add s texture))
+  (when shader (add s shader)))

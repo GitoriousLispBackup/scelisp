@@ -113,7 +113,7 @@
 (def-sce-method texture "Update" :int)
 
 (defcfun "SCE_Texture_Loadv" scetexture
-  (type :int)
+  (type scetextype)
   (w :int)
   (h :int)
   (d :int)
@@ -372,6 +372,9 @@
   (camera scecamera)
   (rendertarget scetexture)
   (cubeface :unsigned-int))
+
+(defsetter scene "SetSkybox"
+  (skybox sceskybox))
 
 (defsetter scene "ClearBuffers")
 

@@ -33,6 +33,7 @@
   (real :float))
 
 (def-sce-method inert "Init" :void)
+;; TODO: wtf is going on here
 (def-sce-method inert "Accum" :void
   (accum scebool))
 (defsetter inert "SetCoefficient"
