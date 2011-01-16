@@ -441,3 +441,21 @@
                                        (pixel (null-pointer)))
   (setf (pointer s) (sce-shader-load vertex pixel nil))
   (sce-shader-build (pointer s)))
+
+;;; SCESkybox
+(defclass skybox (sceobject)
+  ()
+  (:documentation "A skybox"))
+
+(defmethod create ((s skybox))
+  (setf (pointer s) (sce-skybox-create)))
+
+(defmethod add ((s skybox) (tex texture) &key (mode :box-none-texcoord))
+  (sce-skybox-settexture (pointer s)  (pointer tex) mode))
+(defmethod add ((s skybox) (shd shader) &key)
+  (sce-skybox-setshader (pointer s) (pointer shd)))
+
+(defmethod initialize-instance :after ((s skybox)
+                                       &key texture shader)
+  (add s texture)
+  (add s shader))
