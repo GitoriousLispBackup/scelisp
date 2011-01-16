@@ -104,6 +104,11 @@
    (objects :accessor objects :initform nil :initarg :objects))
   (:documentation "A generic SCE object"))
 
+(defgeneric pointer (object)
+  (:documentation "Return the C pointer corresponding to this object")
+  (:method (object)
+    (null-pointer)))
+
 (defmethod add :after (object something &key)
   (push something (objects object)))
 
@@ -322,7 +327,6 @@
   (sce-model-getrootnode (pointer m)))
 
 (defmethod add ((m model) (mesh mesh) &key texture shader)
-  ;; TODO: should more parameters be availables ?
   (let ((texs (if texture
                   (foreign-alloc 'scetexture
                                  :initial-contents (list (pointer texture)
@@ -335,7 +339,7 @@
   (sce-model-mergeinstances (pointer m)))
 
 (defmethod initialize-instance :after ((m model)
-                                       &key mesh texture (shader (null-pointer)))
+                                       &key mesh texture shader)
   (when mesh
     (add m mesh :texture texture :shader shader)))
 
@@ -403,10 +407,11 @@
   ()
   (:documentation "A texture"))
 
-(defmethod initialize-instance :after ((tex texture) &key file)
-  (when file
-    (setf (pointer tex) (sce-texture-loadv 0 0 0 0 0 (list file)))
-    (sce-texture-build (pointer tex) t)))
+(defmethod initialize-instance :after ((tex texture)
+                                       &key file (files (list file))
+                                       (type 0) (w 0) (h 0) (d 0) (force 0))
+  (setf (pointer tex) (sce-texture-loadv type w h d force files))
+  (sce-texture-build (pointer tex) t))
 
 ;;; SCEShader
 (defclass shader (sceobject)
