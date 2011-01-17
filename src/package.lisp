@@ -18,4 +18,7 @@
    :use :shader-param :with-shader
    ;; SCE class
    :launch :handle-event
+   ;; Class names
+   :sce :simple-app
+   :light :node :camera :mesh :model :inert :texture :shader :skybox :scene
    ))
