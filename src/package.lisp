@@ -4,8 +4,8 @@
   (:export
    ;;; api.lisp
    :init :create :draw :objects :update :free :add
-   ;; Movables objects
-   :get-matrix :get-node
+   ;; Movables objects and nodes
+   :get-matrix :get-node :has-moved
    :set-position :translate :set-rotation :rot :rot-x :rot-y :rot-z 
    :set-scale :scale
    ;; Lights
