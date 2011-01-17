@@ -11,9 +11,6 @@
 (defgeneric draw (object)
   (:documentation "Draw an object on the screen"))
 
-(defgeneric objects (object)
-  (:documentation "The objects contained by an object"))
-
 (defgeneric update (object)
   (:documentation "Update an object")
   (:method (object)

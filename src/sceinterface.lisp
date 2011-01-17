@@ -355,6 +355,17 @@
 
 (defconstructor sceneentity)
 
+;;; Skybox
+(defobject skybox)
+(defsetter skybox "SetSize"
+  (size :float))
+(defsetter skybox "SetTexture"
+  (tex scetexture)
+  (mode sceeboxgeomtexcoordmode))
+(defsetter skybox "SetShader"
+  (shader sceshader))
+;; TODO GetEntity & GetInstance
+
 ;;; Scene
 (defobject scene)
 
@@ -383,15 +394,4 @@
 (defsetter scene "ClearBuffers")
 
 (defconstructor scene)
-
-;;; Skybox
-(defobject skybox)
-(defsetter skybox "SetSize"
-  (size :float))
-(defsetter skybox "SetTexture"
-  (tex scetexture)
-  (mode sceeboxgeomtexcoordmode))
-(defsetter skybox "SetShader"
-  (shader sceshader))
-;; TODO GetEntity & GetInstance
 
