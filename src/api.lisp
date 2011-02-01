@@ -333,13 +333,11 @@
   ())
 
 (defmethod initialize-instance :after ((m mesh) &key file geometry (force 2))
-  (flet ((xor (x y)
-           (not (eq (not x) (not y))))))
   (unless (xor file geometry)
     (error "Can't create a mesh without an obj file or a geometry (or with both)"))
   (setf (pointer m) (if file
                         (sce-mesh-load file force)
-                        (sce-mesh-createfrom geometry t)))
+                        (sce-mesh-createfrom (pointer geometry) t)))
   (when (null-pointer-p (pointer m))
     (if file
         (error "Can't load the file: ~a" file)
@@ -501,17 +499,22 @@
   (setf (pointer g) (sce-geometry-create)))
 
 (defmethod initialize-instance :after ((g geometry) &key
-                                       (primitive-type :triangles)
+                                       (primitive :triangles)
                                        positions normals textures indices)
   (flet ((make-array-pointer (type content)
            (if content
-               (foreign-alloc type :initial-contents content)
+               (foreign-alloc type :initial-contents
+                              (if (eq type :float)
+                                  (mapcar (lambda (x) (coerce x 'single-float))
+                                          content)
+                                  content))
                (null-pointer))))
-    (unless (= (length pos) (lenght nor) (length tex))
-      (error "Length of geometry vertices doesn't match"))
+    #|(unless (= (length positions) (length normals) (length textures))
+      (error "Length of geometry vertices doesn't match"))|#
     (let ((pos (make-array-pointer :float positions))
           (nor (make-array-pointer :float normals))
           (tex (make-array-pointer :float textures))
           (ind (make-array-pointer :int indices)))
       (sce-geometry-setdata (pointer g) pos nor tex ind
-                            (length pos) (length indices)))))
+                            (length positions) (length indices))
+      (sce-geometry-setprimitivetype (pointer g) primitive))))
