@@ -9,6 +9,16 @@
 (defctype sceenum :unsigned-int)
 (defctype scebitfield :unsigned-int)
 
+(defcenum sceetype
+  :sce-byte
+  :sce-unsigned-byte
+  :sce-short
+  :sce-unsigned-short
+  :sce-int
+  :sce-float
+  :sce-double
+  :sce-size-t)
+
 ;;; Bools
 (define-foreign-type scebool-type ()
   ()
