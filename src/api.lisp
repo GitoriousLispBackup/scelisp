@@ -332,11 +332,18 @@
 (defclass mesh (sceobject)
   ())
 
-(defmethod initialize-instance :after ((m mesh) &key file (force 2))
-  (unless file (error "Can't create a mesh without an obj file"))
-  (setf (pointer m) (sce-mesh-load file force))
+(defmethod initialize-instance :after ((m mesh) &key file geometry (force 2))
+  (flet ((xor (x y)
+           (not (eq (not x) (not y))))))
+  (unless (xor file geometry)
+    (error "Can't create a mesh without an obj file or a geometry (or with both)"))
+  (setf (pointer m) (if file
+                        (sce-mesh-load file force)
+                        (sce-mesh-createfrom geometry t)))
   (when (null-pointer-p (pointer m))
-    (error "Can't load the file: ~a" file))
+    (if file
+        (error "Can't load the file: ~a" file)
+        (error "Can't create mesh from geometry")))
   (sce-mesh-autobuild (pointer m)))
 
 ;;; SCEModel
@@ -484,3 +491,27 @@
 
 (defmethod initialize-instance :after ((s scene) &key objects)
   (mapcar (curry #'add s) objects))
+
+;;; SCEGeometry
+(defclass geometry (sceobject)
+  ()
+  (:documentation "A geometry object"))
+
+(defmethod create ((g geometry))
+  (setf (pointer g) (sce-geometry-create)))
+
+(defmethod initialize-instance :after ((g geometry) &key
+                                       (primitive-type :triangles)
+                                       positions normals textures indices)
+  (flet ((make-array-pointer (type content)
+           (if content
+               (foreign-alloc type :initial-contents content)
+               (null-pointer))))
+    (unless (= (length pos) (lenght nor) (length tex))
+      (error "Length of geometry vertices doesn't match"))
+    (let ((pos (make-array-pointer :float positions))
+          (nor (make-array-pointer :float normals))
+          (tex (make-array-pointer :float textures))
+          (ind (make-array-pointer :int indices)))
+      (sce-geometry-setdata (pointer g) pos nor tex ind
+                            (length pos) (length indices)))))

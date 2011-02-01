@@ -237,6 +237,9 @@
 (defcfun "SCE_Mesh_Load" scemesh
   (fname :string)
   (force :int))
+(defcfun "SCE_Mesh_CreateFrom" scemesh
+  (geom scegeometry)
+  (canfree scebool))
 
 (defsetter mesh "AutoBuild")
 
